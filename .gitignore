@@ -1,0 +1,8 @@
+*.pyc
+.cache
+.idea
+example/*.dm3
+example/*.hdf5
+docs/_build
+dist
+build
