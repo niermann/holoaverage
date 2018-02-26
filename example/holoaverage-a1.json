@@ -1,0 +1,72 @@
+{
+    // Path of hologram files (using printf format, integer argument). Required.
+    "object_names" : "GaN_holographic_focal_series/a1_%03d.dm3",
+    
+    // Index of first hologram. Required.
+    "object_first" : 1,
+    
+    // Index of last hologram. Required.
+    "object_last" : 20,
+    
+    // Same (name, first index, last index) for "empty" holograms.
+    "empty_names" : "GaN_holographic_focal_series/empty_%03d.dm3",
+    "empty_first" : 1,
+    "empty_last" : 20,
+
+    // Defocus of first hologram (i.e. object_first) in nm. Defaults to 0.
+    "defocus_first" : 20.0,
+
+    // Defocus step size in nm. Defaults to 0.
+    "defocus_step" : -2.0,
+
+    // Size (in px) used for reconstruction of "empty" holograms. Required.
+    "empty_size" : 512,
+
+    // Size (in px) used for reconstruction of "object" holograms Required.
+    "object_size" : 384,
+    
+    // Sampling (nm/px) of object holograms.
+    // Defaults to value in data files.
+    "sampling" : 0.00519824,
+
+    // X, Y Position of side band in FFT pixels (origin is in center). Required.
+    "sideband_pos" : [1136, 1304],
+
+    // Reconstruction region in pixels (L, T, R, B). Defaults to full region.
+    "roi" : [128, 128, 1920, 1920],
+    
+    // Region for raw alignment in pixels (L, T, R, B). Defaults to roi.
+    // Set to null for no raw alignment
+    //"align_roi" : [256, 256, 1536, 1536],
+    //"align_roi" : null,
+    
+    // Output file (will be HDF5 file). Required.
+    "output" : "a1.hdf5",
+
+    // Mask type (see FilterFunction for details). Defaults to "EDGE"
+    // "filter_func" : "EDGE",
+    "filter_func" : ["BUTTERWORTH", 14],
+
+    // cut off frequency in 1/nm (q_max). Required.
+    // Also used as low-pass frequency for raw alignment
+    "cut_off" : 14.5,
+
+    // Parameterization for MTF
+    "mtf" : [["CONSTANT", -2.25536738e-02],
+             ["LORENTZIAN", 1.02543658e-05, 1.15367655e-04],
+             ["LORENTZIAN", 2.49224357e-02, 5.35262063e-02],
+             ["GAUSSIAN", 4.60461599e-01, 4.36842560e+02]],
+
+    // Voltage in kV. Defaults to value recorded in data files.
+    "voltage": 300,
+
+    // Correct phase by empty phase only (true), or full complex reconstruction (false). 
+    // Defaults to false.
+    //"only_phase": true,
+    
+    // Optimize defocus. Default: false
+    "adjust_defocus" : true
+
+    // Optimize shift. Default: true
+    // "adjust_shift" : false
+}

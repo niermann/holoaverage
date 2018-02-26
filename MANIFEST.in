@@ -1,0 +1,11 @@
+graft docs
+graft tests
+graft example
+
+include LICENSE
+include CONTRIBUTING.rst
+include README.rst
+
+prune example/GaN_holographic_focal_series
+prune docs/_build
+global-exclude *.dm3 *.hdf5 
