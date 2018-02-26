@@ -7,10 +7,10 @@ the microscope, like specimen and biprism drifts, can be tracked and corrected b
 
 The script is written and maintained by Tore Niermann (email: tore.niermann@tu-berlin.de).
 
-Up to date versions can be found on the GitHub site:
-    https://github.com/niermann/holoaverage
+Details on the usage can be found in the tutorial section of the documentation. The documentation can be
+found at
 
-Details on the usage can be found in the tutorial section of the documentation.
+    https://holoaverage.readthedocs.io
 
 Citation
 --------
@@ -71,6 +71,9 @@ without problems. You can install pyFFTW by (with Python 2.7 again use ``pip`` i
 
     pip3 install --upgrade pyfftw
 
+Up to date source versions can be found on the GitHub site:
+
+    https://github.com/niermann/holoaverage
 
 Usage
 -----
