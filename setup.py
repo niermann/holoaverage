@@ -12,12 +12,13 @@ of the microscope, like specimen and biprism drifts, can be tracked and correcte
 The averaging process is speed up, when also the `pyFFTW <http://hgomersall.github.com/pyFFTW/>`_ package is installed. 
 However, is not a requirement for holoaverage and thus not automatically installed by ``pip``.
 
-The source for holoaverage can be found on `GitHub <https://github.com/niermann/holoaverage>`_.
+The source for holoaverage can be found on `GitHub <https://github.com/niermann/holoaverage>`_. The documentation can
+be found on `ReadTheDocs <https://holoaverage.readthedocs.io>`_.
 """
 
 setup(
     name='holoaverage',
-    version='0.99.4',
+    version='1.0.0',
     license='GPLv3+',
     description='Reconstruction and averaging of off-axis electron holograms as obtained by transmission electron microscopes.',
     long_description=long_description,
@@ -51,4 +52,8 @@ setup(
             'holoaverage = holoaverage.main:main',
         ]
     },
+    project_urls={
+        "Documentation": "https://holoaverage.readthedocs.io",
+        "Source Code": "https://github.com/niermann/holoaverage",
+    }
 )
