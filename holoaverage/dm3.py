@@ -40,8 +40,10 @@ def _get_byteorder():
 
 _host_byteorder = _get_byteorder()
 
+# Codec is just a guess
+# Jonas Krehl suggested CP1252
+_bytestring_decoder = codecs.getdecoder('cp1252')
 _bytestring_errorhandler = 'ignore'
-_bytestring_decoder = codecs.getdecoder('cp1252')   # Just a guess
 
 _utf16_le_decoder = codecs.getdecoder("'utf_16_le")
 _utf16_be_decoder = codecs.getdecoder("'utf_16_be")
