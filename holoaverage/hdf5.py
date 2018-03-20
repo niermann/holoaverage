@@ -52,10 +52,6 @@ def loadHDF5(fileOrFileName, dataName=None):
     Returns:
         data as :class:`DataSet`
     """
-    if dataName is None:
-        items = fileOrFileName.split('?', 1)
-        fileOrFileName = items[0]
-        dataName = items[1]
     if isinstance(fileOrFileName, h5py.File):
         dataset = fileOrFileName[dataName]
         result = DataSet(dataset.shape, dataset.dtype)
@@ -64,9 +60,7 @@ def loadHDF5(fileOrFileName, dataName=None):
     else:
         with h5py.File(fileOrFileName, "r") as fd:
             dataset = fd[dataName]
-            result = DataSet(dataset.shape, dataset.dtype)
-            result.array[...] = dataset[...]
-            result.attrs.update(loadAttrDictHDF5(dataset.attrs))
+            result = DataSet(data=dataset[...], attrs=loadAttrDictHDF5(dataset.attrs))
     return result
 
 

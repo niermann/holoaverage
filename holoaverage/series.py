@@ -33,15 +33,48 @@ class DataSet(object):
                           "voltage(kV)", "thickness(nm)", "exposure(s)", "binning", "space",
                           "microscope", "detector", "timestamp"]
 
-    def __init__(self, shape, dtype=float, factory=empty_aligned):
-        """Create empty dataset of given shape and data type.
-        Arguments:
-            shape    Tuple of Numbers
-            dtype    Datatype
-            factory  A method with arguments (shape, dtype) that creates an empty array.
+    def __init__(self, shape=None, dtype=None, data=None, copy=True, attrs=None):
         """
-        self._array = factory(shape, dtype)
+        Create dataset.
+
+        If *shape* and *dtype* are given, an empty Dataset is created:
+
+        >>> dataset1 = DataSet((10, 10), dtype=int)
+        >>> dataset1.shape
+        (10, 10)
+
+        If no *dtype* is given, a `float` DataSet is created.
+
+        Alternatively, a Dataset can be created from a provided array.
+        The array is only copied, if *copy* is `True`
+
+        >>> array = np.arange(100)
+        >>> dataset2 = DataSet(data=array, copy=False)
+        >>> dataset2.shape
+        (100)
+        >>> dataset2.array is array
+        True
+
+        :param shape: Shape of dataset
+        :type shape: Tuple of ints
+        :param dtype: Datatype of dataset
+        :type dtype: np.dtype
+        :param data: Data array
+        :type data: np.array
+        :param copy: Whether data array should be copied.
+        :type copy: bool
+        """
+        if (data is not None) and (shape is None):
+            self._array = np.array(data, dtype=dtype, copy=copy)
+        elif (shape is not None) and (data is None):
+            if dtype is None:
+                dtype = float
+            self._array = empty_aligned(shape, dtype)
+        else:
+            raise ValueError("Either 'shape' or 'data' must be provided.")
         self._attrs = {}
+        if attrs is not None:
+            self._attrs.update(attrs)
 
     @property
     def array(self):
@@ -66,17 +99,46 @@ class DataSet(object):
 
     def copy(self):
         """Returns deep copy of dataset."""
-        result = DataSet(self._array.shape, self._array.dtype)
-        result._array[...] = self._array
-        result._attrs.update(self._attrs)
+        result = DataSet(self._array.shape, self._array.dtype, attrs=self._attrs)
         return result
 
     @staticmethod
-    def fromArray(array):
-        """Creates dataset from numpy array."""
-        result = DataSet(array.shape, array.dtype)
-        result._array[...] = array
-        return result
+    def load_dm3(filename, index=1, include_tags=True):
+        """
+        Load :class:`DataSet` from DM3 file.
+
+        DM3 image files can contain several images. In all observed files an index
+        of 0 corresponds to the thumbnail and an index of 1 corresponds to the data
+        itself.
+
+        If `include_tags` is true, the DM3 ImageTags will be parsed into Python
+        objects and included as 'dm3-tags' entry in the DataSet's metadata.
+
+        :param filename: Name of the file to load_cel.
+        :type filename: str
+        :param index: Index of data in file (usually 1)
+        :type index: int
+        :param include_tags: Whether image tags should be parsed
+        :type include_tags: bool
+        :returns: DataSet
+        """
+        from .dm3 import load_dm3
+        array, attrs = load_dm3(filename, index, include_tags=include_tags)
+        return DataSet(data=array, copy=False, attrs=attrs)
+
+    @staticmethod
+    def load_hdf5(fileOrFileName, dataName=None):
+        """
+        Load dataset from HDF5 file.
+
+        :param fileOrFilename: Name of file to load or HDF5 file.
+        :type fileOrFilename: str or HDF5File
+        :param dataName: Name of dataset to load.
+        :type dataName: str
+        :returns: DataSet
+        """
+        from .hdf5 import loadHDF5
+        return loadHDF5(fileOrFileName, dataName)
 
 
 class AbstractSeries(object):
@@ -451,3 +513,4 @@ class LazyLoadingSeries(AbstractSeries):
         # Insert first and done
         result._insert(0, first)
         return result
+
