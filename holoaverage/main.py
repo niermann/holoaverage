@@ -24,7 +24,6 @@ import io
 
 from holoaverage.defocus import propagate
 from .series import DataSet, LazyLoadingSeries
-from .dm3 import load_dm3
 from .hdf5 import saveHDF5, loadHDF5
 from .reconstruction import series_reconstruction, holo_reconstruction
 from .average import holoAverage
@@ -58,9 +57,11 @@ def load_file(filename):
     parts = filename.split("?", 1)
     ext = os.path.splitext(parts[0])[1].lower()
     if ext == ".dm3":
-        return load_dm3(filename)
+        return DataSet.load_dm3(filename)
     elif ext == ".hdf5":
-        return loadHDF5(filename)
+        # HDF5 file should contain dataset name, separated by question mark
+        items = filename.split('?', 1)
+        return DataSet.load_hdf5(items[0], items[1])
     else:
         raise ValueError("Unrecognized image extension.")
 

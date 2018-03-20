@@ -26,7 +26,7 @@ import codecs
 import struct
 import numpy as np
 
-from .series import DataSet
+__all__ = ("load_dm3", )
 
 
 def _get_byteorder():
@@ -37,12 +37,12 @@ def _get_byteorder():
         return '>'
     raise ValueError("Unknown byte order.")
 
+
 _host_byteorder = _get_byteorder()
 
-_tagname_errorhandler = 'ignore'
-_tagname_decoder = codecs.getdecoder('latin_1')  # just a guess
+_bytestring_errorhandler = 'ignore'
+_bytestring_decoder = codecs.getdecoder('cp1252')   # Just a guess
 
-_latin1_decoder = codecs.getdecoder('latin_1')
 _utf16_le_decoder = codecs.getdecoder("'utf_16_le")
 _utf16_be_decoder = codecs.getdecoder("'utf_16_be")
 
@@ -158,7 +158,7 @@ class TagItem(TagBase):
         :type byteorder: '<' or '>'
         """
         name_length = struct.unpack('>H', raw[offset:offset + 2])[0]
-        name = _tagname_decoder(raw[offset + 2:offset + 2 + name_length], _tagname_errorhandler)[0]
+        name = _bytestring_decoder(raw[offset + 2:offset + 2 + name_length], _bytestring_errorhandler)[0]
         super(TagItem, self).__init__(name, raw, offset, byteorder)
         magic = struct.unpack('>I', raw[offset + 2 + name_length:offset + 6 + name_length])[0]
         if magic != TagItem.ITEM_MAGIC:
@@ -291,7 +291,7 @@ class TagItem(TagBase):
         if item_type == TagItem.ITEMTYPE_ARRAY:
             base_type = self.info_field(1)
             if base_type == TagItem.ITEMTYPE_UINT8:
-                return _latin1_decoder(self.raw_item)[0]
+                return _bytestring_decoder(self.raw_item)[0]
             elif base_type == TagItem.ITEMTYPE_UINT16:
                 if self._byteorder == '<':
                     return _utf16_le_decoder(self.raw_item)[0]
@@ -442,8 +442,6 @@ class TagContainer(TagBase):
         :type raw: bytes
         :param offset: Offset of first byte of tag
         :type offset: int
-        :param length: Length of tag in bytes
-        :type length: int
         :param byteorder: Byteroder of the tag
         :type byteorder: '<' or '>'
         """
@@ -535,7 +533,7 @@ class TagGroup(TagContainer):
         :type byteorder: '<' or '>'
         """
         name_length = struct.unpack('>H', raw[offset:offset + 2])[0]
-        name = _tagname_decoder(raw[offset + 2:offset + 2 + name_length], _tagname_errorhandler)[0]
+        name = _bytestring_decoder(raw[offset + 2:offset + 2 + name_length], _bytestring_errorhandler)[0]
         super(TagGroup, self).__init__(name, raw, offset, byteorder)
         self._init_container(offset + 2 + name_length)
 
@@ -695,14 +693,17 @@ _DM3_IMAGE_DATATYPE = {
 
 def load_dm3(filename, index=1, include_tags=True):
     """
-    Load :class:`DataSet` from DM3 file.
+    Load image from DM3 file.
 
     DM3 image files can contain several images. In all observed files an index
     of 0 corresponds to the thumbnail and an index of 1 corresponds to the data
     itself.
 
+    The function returns two objects, the image array and a `dict` with parsed
+    image tags (including calibrations).
+
     If `include_tags` is true, the DM3 ImageTags will be parsed into Python
-    objects and included as 'dm3-tags' entry in the DataSet's metadata.
+    objects and included as 'dm3_tags' entry in the returned attributes.
 
     :param filename: Name of the file to load_cel.
     :type filename: str
@@ -710,7 +711,7 @@ def load_dm3(filename, index=1, include_tags=True):
     :type index: int
     :param include_tags: Whether image tags should be parsed
     :type include_tags: bool
-    :rtype: DataSet
+    :returns: Numpy array, dict
     """
     with DM3File(filename, 'r') as tags:
         image = tags['ImageList'][index]
@@ -734,8 +735,9 @@ def load_dm3(filename, index=1, include_tags=True):
         # Read image
         image_array = image_data['Data']
         dtype = np.dtype(image_array.byteorder + dtype)
-        dataset = DataSet(shape, dtype)
-        dataset.array[...] = np.frombuffer(image_array.raw_item, dtype=dtype).reshape(shape)
+        array = np.empty(shape, dtype)
+        array[...] = np.frombuffer(image_array.raw_item, dtype=dtype).reshape(shape)
+        attrs = dict()
 
         # Get dimension calibrations
         dim_scale = []
@@ -746,25 +748,25 @@ def load_dm3(filename, index=1, include_tags=True):
             dim_scale.append(scale)
             dim_offset.append(scale * cal['Origin'].as_float())
             dim_unit.append(cal['Units'].as_string())
-        dataset.attrs["dim_unit"] = dim_unit
-        dataset.attrs["dim_scale"] = np.array(dim_scale, dtype=float)
-        dataset.attrs["dim_offset"] = np.array(dim_offset, dtype=float)
+        attrs["dim_unit"] = dim_unit
+        attrs["dim_scale"] = np.array(dim_scale, dtype=float)
+        attrs["dim_offset"] = np.array(dim_offset, dtype=float)
 
         # Get brightness calibrations
         scale = image_data['Calibrations:Brightness:Scale'].as_float()
-        dataset.attrs['unit'] = image_data['Calibrations:Brightness:Units'].as_string()
-        dataset.attrs['scale'] = scale
-        dataset.attrs['offset'] = scale * image_data['Calibrations:Brightness:Origin'].as_float()
+        attrs['unit'] = image_data['Calibrations:Brightness:Units'].as_string()
+        attrs['scale'] = scale
+        attrs['offset'] = scale * image_data['Calibrations:Brightness:Origin'].as_float()
 
         # Handle image tags
         image_tags = image['ImageTags']
-        dataset.attrs.update(parse_known_metadata_tags(image_tags))
+        attrs.update(parse_known_metadata_tags(image_tags))
         if include_tags:
-            dataset.attrs['dm3_tags'] = parse_tag(image_tags)
-            dataset.attrs['dm3_unique_id'] = parse_tag(image['UniqueID'])
+            attrs['dm3_tags'] = parse_tag(image_tags)
+            attrs['dm3_unique_id'] = parse_tag(image['UniqueID'])
 
         # More metadata
-        dataset.attrs['source_file'] = filename
-        dataset.attrs['source_name'] = image['Name'].as_string()
+        attrs['source_file'] = filename
+        attrs['source_name'] = image['Name'].as_string()
 
-        return dataset
+        return array, attrs
