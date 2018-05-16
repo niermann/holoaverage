@@ -127,7 +127,7 @@ class DataSet(object):
         return DataSet(data=array, copy=False, attrs=attrs)
 
     @staticmethod
-    def load_hdf5(fileOrFileName, dataName=None):
+    def load_hdf5(fileOrFileName, dataName):
         """
         Load dataset from HDF5 file.
 
@@ -139,6 +139,32 @@ class DataSet(object):
         """
         from .hdf5 import loadHDF5
         return loadHDF5(fileOrFileName, dataName)
+
+    @staticmethod
+    def load_raw(filename, shape, dtype, swap_bytes=False, offset=0):
+        """
+        Load raw dataset from file.
+
+        :param filename: Filename to load
+        :type filename: str
+        :param shape: Size of data
+        :type shape: Tuple of ints
+        :param dtype: Datatype
+        :type dtype: np.dtype-compatible
+        :param swap_bytes: Whether bytes should be swapped
+        :type swap_bytes: bool
+        :param offset: Number of bytes to skip at file head.
+        :type offset: int
+        :returns: DataSet
+        """
+        dtype = np.dtype(dtype)
+        count = shape[0] * shape[1]
+        with open(filename, "rb") as file:
+            file.seek(offset, 0)
+            data = np.fromfile(file, dtype, count=count).reshape(*shape)
+        if swap_bytes:
+            data = data.byteswap()
+        return DataSet(data=data, copy=False)
 
 
 class AbstractSeries(object):

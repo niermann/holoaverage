@@ -1,5 +1,5 @@
-Overview
-========
+About
+=====
 
 Holoaverage is a Python script for the reconstruction and averaging of series of off-axis electron holograms, typically
 recorded in transmission electron holograms. The averaging is performed iteratively, such that instabilities of
@@ -7,7 +7,7 @@ the microscope, like specimen and biprism drifts, can be tracked and corrected b
 
 The script is written and maintained by Tore Niermann (email: tore.niermann@tu-berlin.de).
 
-Details on the usage can be found in the tutorial section of the documentation. The documentation can be
+Details on the usage can be found in the documentation. The documentation can be
 found at
 
     https://holoaverage.readthedocs.io
@@ -74,24 +74,6 @@ without problems. You can install pyFFTW by (with Python 2.7 again use ``pip`` i
 Up to date source versions can be found on the GitHub site:
 
     https://github.com/niermann/holoaverage
-
-Usage
------
-
-The above installation steps install the ``holoaverage`` command line script (make sure you're python distribution's
-script directory is in the path).
-
-The ``holoaverage`` script has the following syntax:
-
-::
-
-    holoaverage [-v] parameter-file
-
-    The parameter file is a JSON file. See the documentation for details.
-    If "-" is passed as parameter file name, the parameters are read from stdin.
-
-    Options:
-        -v Verbose
 
 Bug reporting
 -------------

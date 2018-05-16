@@ -6,6 +6,7 @@ Holoaverage - reconstruction and averaging of off-axis holograms
     :caption: Contents:
 
     readme
+    overview
     tutorial
-    param
+    parameters
     outputs

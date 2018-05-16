@@ -21,6 +21,7 @@ import os.path
 import numpy as np
 import json
 import io
+import warnings
 
 from .defocus import propagate
 from .series import DataSet, LazyLoadingSeries
@@ -33,6 +34,7 @@ from .jsoncleaner import remove_trailing_commas, remove_comments
 from .filter import FilterFunction
 from .version import __version__
 
+
 def print_syntax(prog_name):
     print('Syntax:')
     print('\t%s [-vV] parameter-file' % prog_name)
@@ -43,6 +45,7 @@ def print_syntax(prog_name):
     print('Options:')
     print('\t-v Verbose')
     print('\t-V Print version number and exit')
+
 
 def print_version():
     print('holoaverage Version %s' % __version__)
@@ -58,6 +61,7 @@ def print_version():
     print('MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the')
     print('GNU General Public License for more details.')
 
+
 def parse_parameters(param):
     # Remove comments and trailing commas
     param = remove_comments(param)
@@ -67,16 +71,45 @@ def parse_parameters(param):
     return json.loads(param)
 
 
-def load_file(filename):
+def load_file(path):
     """Return loader function depending on extension"""
-    parts = filename.split("?", 1)
-    ext = os.path.splitext(parts[0])[1].lower()
-    if ext == ".dm3":
+    # Parse file name
+    parts = path.split("?")
+    filename = parts[0]
+    type = os.path.splitext(parts[0])[1].lower()
+    if type:
+        type = type[1:]
+    param = {}
+    for part in parts[1:]:
+        if not part:
+            continue
+        subparts = part.split('=', 1)
+        key = subparts[0]
+        if len(subparts) != 2:
+            value = ''
+        else:
+            value = subparts[1]
+        param[key] = value
+
+    # Override file type
+    type = param.pop("type", type)
+    if type == "dm3":
         return DataSet.load_dm3(filename)
-    elif ext == ".hdf5":
-        # HDF5 file should contain dataset name, separated by question mark
-        items = filename.split('?', 1)
-        return DataSet.load_hdf5(items[0], items[1])
+    elif type == "hdf5" or type == "h5":
+        if "dataset" in param:
+            dataset = param["dataset"]
+        elif (len(parts) == 2) and not ("=" in parts[1]):
+            dataset = parts[1]
+            warnings.warn("Passing the dataset name after question mark for HDF5 files is deprecated.", DeprecationWarning)
+        else:
+            raise ValueError("Parameter 'dataset' missing for HDF5 file: %s" % path)
+        return DataSet.load_hdf5(filename, dataset)
+    elif type == "raw":
+        shape = int(param["ysize"]), int(param["xsize"])
+        dtype = param["dtype"]
+        offset = int(param.get("offset", 0))
+        swap_bytes = int(param.get("swap_bytes", 0))
+        return DataSet.load_raw(filename, shape, dtype, offset=offset, swap_bytes=swap_bytes)
     else:
         raise ValueError("Unrecognized image extension.")
 
@@ -130,13 +163,16 @@ def create_synthetic_empty(camera_dev, sideband_pos, empty_size, sampling, mask_
     return empty_holo
 
 
-def reconstruct_average(param, basepath="", verbose=0):
+def holoaverage(param, basepath="", verbose=0):
     """
-    Reconstruct averaged holograms
+    Reconstruct averaged holograms. See documentation for parameter description.
 
     :param param: Dictionary with parameters
-    :param basepath: All filenames are taken relative to this path.
-    :param verbose: Verbosity level
+    :type param: dict
+    :param basepath: All filenames are taken relative to this path (defaults to current directory)
+    :type basepath: str
+    :param verbose: Verbosity level (defaults to 0)
+    :type verbose: int
     """
     # Get required parameters
     if 'object_names' in param:
@@ -198,7 +234,7 @@ def reconstruct_average(param, basepath="", verbose=0):
         if align_roi is not None:
             align_roi = np.array(align_roi, dtype=int)
         else:
-            warnings.warn("Setting 'align_roi' to 'null' is deprecated. Set the parameter 'enable_raw_align' to false instead")
+            warnings.warn("Setting 'align_roi' to 'null' is deprecated. Set the parameter 'enable_raw_align' to false instead", DeprecationWarning)
             enable_raw_align = False
     else:
         align_roi = None
@@ -428,7 +464,7 @@ def main(argv=sys.argv):
     param = parse_parameters(param)
 
     # Reconstruct
-    reconstruct_average(param, basepath, verbose=verbose)
+    holoaverage(param, basepath, verbose=verbose)
     return 0  # Use exit code 0 for success
 
 

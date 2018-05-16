@@ -8,7 +8,7 @@ will always be a HDF5 file.
 
 This file typically holds three datasets:
 
-The dataset ``data`` contains the averaged reconstruction of the (drift aligned) object holograms. If the defocus value
+The dataset ``data`` contains the averaged reconstruction of the normalized and drift aligned object holograms. If the defocus value
 for the individual holograms (as specified by the parameters :ref:`param-defocus_first` and :ref:`param-defocus_step` is
 not zero, the holograms are propagated to the zero defocus. The dataset ``empty`` contains the averaged
 reconstruction of the empty holograms.
@@ -27,7 +27,7 @@ the :ref:`param-object_names` parameter. The dataset ``empty`` is not present, w
 is disabled by omitting the :ref:`param-empty_names` parameter.
 
 If the parameter :ref:`param-output_series` is set, additional a group ``series`` is present in the output file,
-which contains datasets ``000``, ``001``, ``002``, etc. These contain the reconstruction of the individual holograms
+which contains datasets ``000``, ``001``, ``002``, ... . These contain the reconstructions of the individual holograms
 in the object series. The dataset ``000`` refers to the first hologram (as specified by the parameter
 :ref:`param-object_names` and :ref:`param-object_first`). The consecutive numbers refer to the consecutive holograms
 in the series. These are also stored as complex valued datasets.
