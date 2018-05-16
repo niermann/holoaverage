@@ -31,18 +31,32 @@ from .rawalign import rawAlign, extractROI
 from .camera import ParameterizedMTF
 from .jsoncleaner import remove_trailing_commas, remove_comments
 from .filter import FilterFunction
-
+from .version import __version__
 
 def print_syntax(prog_name):
     print('Syntax:')
-    print('\t%s [-v] parameter-file' % prog_name)
+    print('\t%s [-vV] parameter-file' % prog_name)
     print()
     print('The parameter file is a JSON file. See documentation for details.')
     print('If "-" is passed as parameter file name, the parameters are read from stdin.')
     print()
     print('Options:')
     print('\t-v Verbose')
+    print('\t-V Print version number and exit')
 
+def print_version():
+    print('holoaverage Version %s' % __version__)
+    print('Copyright (c) 2018 Tore Niermann')
+    print()
+    print('holoaverage is free software: you can redistribute it and/or modify')
+    print('it under the terms of the GNU General Public License as published by')
+    print('the Free Software Foundation, either version 3 of the License, or')
+    print('(at your option) any later version.')
+    print()
+    print('Foobar is distributed in the hope that it will be useful,')
+    print('but WITHOUT ANY WARRANTY; without even the implied warranty of')
+    print('MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the')
+    print('GNU General Public License for more details.')
 
 def parse_parameters(param):
     # Remove comments and trailing commas
@@ -377,6 +391,9 @@ def main(argv=sys.argv):
             arg_index += 1
             if option == 'v':
                 verbose += 1
+            elif option == 'V':
+                print_version()
+                return 0
             elif option == '':
                 param_file = '-'
             else:
