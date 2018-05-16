@@ -21,6 +21,8 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+# Read version number
+execfile('../holoaverage/version.py')
 
 # -- General configuration ------------------------------------------------
 
@@ -56,7 +58,7 @@ author = 'Tore Niermann'
 # built documents.
 #
 # The short X.Y version.
-version = '1.0.0'
+version = __version__
 # The full version, including alpha/beta/rc tags.
 release = version
 

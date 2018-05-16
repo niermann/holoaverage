@@ -3,6 +3,8 @@
 
 from setuptools import setup
 
+# Read version number
+execfile('../holoaverage/version.py')
 
 long_description = """
 Holoaverage is a Python script for the reconstruction and averaging of series of off-axis electron holograms, 
@@ -18,7 +20,7 @@ be found on `ReadTheDocs <https://holoaverage.readthedocs.io>`_.
 
 setup(
     name='holoaverage',
-    version='1.0.0',
+    version=__version__,
     license='GPLv3+',
     description='Reconstruction and averaging of off-axis electron holograms as obtained by transmission electron microscopes.',
     long_description=long_description,
