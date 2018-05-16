@@ -192,16 +192,16 @@ def reconstruct_average(param, basepath="", verbose=0):
         binning = None
     filter_func = param.get('filter_func', 'edge')
     only_phase = bool(param.get('only_phase', False))
-    if 'align_roi' in param:
-        align_roi = param.get('align_roi')
+    enable_raw_align = bool(param.get('enable_raw_align', True))
+    if enable_raw_align and ('align_roi' in param):
+        align_roi = param['align_roi']
         if align_roi is not None:
             align_roi = np.array(align_roi, dtype=int)
-            disable_raw_align = False
         else:
-            disable_raw_align = True
+            warnings.warn("Setting 'align_roi' to 'null' is deprecated. Set the parameter 'enable_raw_align' to false instead")
+            enable_raw_align = False
     else:
         align_roi = None
-        disable_raw_align = False
     adjust_defocus = bool(param.get('adjust_defocus', False))
     adjust_shift = bool(param.get('adjust_shift', True))
     adjust_tilt = bool(param.get('adjust_tilt', False))
@@ -309,7 +309,7 @@ def reconstruct_average(param, basepath="", verbose=0):
     data_series.attrs['roi'] = roi
     if align_roi is None:
         align_roi = roi
-    if not disable_raw_align and len(data_series) > 1:
+    if enable_raw_align and len(data_series) > 1:
         data_series = rawAlign(data_series, qMax=cut_off, roi=align_roi, verbose=verbose)
         data_series.attrs['align_roi'] = align_roi
     data_rois = extractROI(data_series, roi, verbose=verbose)
