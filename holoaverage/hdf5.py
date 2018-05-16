@@ -40,17 +40,13 @@ def loadAttrDictHDF5(attrs):
     return result
 
 
-def loadHDF5(fileOrFileName, dataName=None):
-    """Load dataset from HDF5 file.
+def loadHDF5(fileOrFileName, dataName):
+    """
+    Load dataset from HDF5 file.
 
-    Arguments:
-        fileOrFilename
-            Name of file to load or HDF5 file.
-        dataName
-            Name of dataset to load. If None dataset name should be appended to filename (separated by question mark)
-
-    Returns:
-        data as :class:`DataSet`
+    :param fileOrFilename: Name of file to load or HDF5 file.
+    :param dataName: Name of dataset to load.
+    :rtype: DataSet
     """
     if isinstance(fileOrFileName, h5py.File):
         dataset = fileOrFileName[dataName]

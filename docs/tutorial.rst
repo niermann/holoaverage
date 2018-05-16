@@ -1,3 +1,5 @@
+.. highlight:: javascript
+
 .. _sec-tutorial:
 
 Tutorial
@@ -130,9 +132,10 @@ documentation. Lines beginning with double slashes (i.e. ``//`` are comments and
         "roi" : [128, 128, 1920, 1920],
 
         // Region for raw alignment in pixels (L, T, R, B). Defaults to roi.
-        // Set to null for no raw alignment
         //"align_roi" : [256, 256, 1536, 1536],
-        //"align_roi" : null,
+
+        // Disable raw alignment. Raw alignment is enabled by default.
+        //"enable_raw_alignment" : false,
 
         // Output file (will be HDF5 file). Required.
         "output" : "a1.hdf5",
@@ -342,14 +345,14 @@ there is no specimen drift in empty holograms. For another, the reconstructed em
 distortions of the camera and the projection system of the microscope. This are fixed to the camera pixels.
 The flat-field correction done with the object holograms is made with the corresponding sub-region (tracked for
 specimen drift) of the reconstructed empty hologram. This requires the empty hologram reconstruction to cover the whole
-image area. For this reason the reconstruction size of the empty holograms can be chosen indepedently, and is made a
+image area. For this reason the reconstruction size of the empty holograms can be chosen independently, and is made a
 little bit larger here:
 
 ::
 
-        "image_size" : 512,
+        "empty_size" : 512,
 
-If the whole hologram area is reconstructed in the object series, the ``image_size`` parameter should be chosen
+If the whole hologram area is reconstructed in the object series, the ``empty_size`` parameter should be chosen
 identically to the ``object_size`` parameter.
 
 

@@ -1,49 +1,20 @@
-.. _sec-parameters:
-
-Parameter files
-===============
-
-Structure
----------
-
-Parameter files for *holoaverage* are plain text files with a JSON (`<http://www.json.org>`_) compatible syntax. Such files
-can be edited by any text editor. The whole configuration must be a JSON object. Beside pure JSON the parser also
-allows Javascript-like comments (line and block comments), as well as trailing commas. A valid structure for example is
-
 .. highlight:: javascript
 
-::
+.. _sec-parameters:
 
-    {
-        "number_parameter": 1.123,
-        "boolean_parameter": true,
-        "text_parameter": "Bla bla",
-        "a_list": [1.0, 2.0, 3.141],
-        "an_embedded_object": {
-            "foo": "parrot",
-            "bar": "squawk"
-        },
+Parameters
+==========
 
-        // A line comment
-        "more_parameters": 1,
+File format
+-----------
 
-        /*
-          A block comment
-        */
-        "another_parameter": null,
+Parameter files for *holoaverage* are plain text files with a JSON (`<http://www.json.org>`_) compatible syntax. Such files
+can be edited by any text editor. The whole parameter set must be a JSON object. Beside pure JSON the parser also
+allows Javascript-like comments (line and block comments), as well as trailing commas. See the :ref:`sec-tutorial` for
+example files.
 
-        // Allow trailing commas in lists/arrays
-        "second_list": [1, 2, 3,],
-
-        // Allow trailing commas in objects
-        "second_object": { "foo": 1, "bar": 2, },
-
-        "string_with_escapes": "Backslash is used as escape... Use \\ backslash for default backslash."
-    }
-
-
-When a parameter file is provided, *holoaverage* expects it to be in UTF-8 encoding. For parameters from *stdin* it uses
-the standard Python encoding (you can use the `PYTHONIOENCODING
+When a parameter file is provided, *holoaverage* expects it to be in UTF-8 encoding (see `Wikipedia article <https://en.wikipedia.org/wiki/UTF-8>`_
+for details). For parameters from *stdin* it uses the standard Python encoding (you can use the `PYTHONIOENCODING
 <https://docs.python.org/3/using/cmdline.html#envvar-PYTHONIOENCODING>`_ environment variable to override this behavior).
 
 .. _sec-file_names:
@@ -51,22 +22,74 @@ the standard Python encoding (you can use the `PYTHONIOENCODING
 File names / Dataset names
 --------------------------
 
-Some configuration keys are file pathes. All file pathes are relative to the directory, where the parameter file
+Some parameters are file pathes. All file pathes are relative to the directory, where the parameter file
 is located. If the parameters are read from *stdin*, the pathes are relative to the current directory. This behavior
 can be changed by setting the :ref:`param-path` parameter.
 
-Pathes consider forward slashes (``/``) and backslashes (``\\``) to be path separators. Internally all pathes are
-normalized to the platform (e.g. backslashes on Windows platforms). In JSON strings backslashes are escape sequences,
-with special meaning. For this reason, if you wan't to write a single backslash (like in a Windows path separator) into
-a JSON string you always have to put in a double backslash. The JSON string ``"this\\is\\my\\path"`` becomes the path
-``this\is\my\path``.
+Within a path forward slashes (``/``) as well as backslashes (``\\``) both are treated as path separators.
+Internally all pathes are normalized to the platform (e.g. backslashes on Windows platforms).
 
-Some file types (like HDF5) might contain several datasets. These contained datasets can be referred by adding a
-question mark and the dataset name to the file name: for instance the dataset ``embedded/data`` in the file
-``some_file.hdf5`` can be referred to as ``some_file.hdf5?embedded/data``.
+In JSON strings backslashes are escape sequences, with special meaning. For this reason, if you wan't to write a single
+backslash (like in a Windows path separator) into a JSON string you always have to put in a double backslash.
+The JSON string ``"this\\is\\my\\path"`` becomes the path ``this\is\my\path``.
 
-Parameters in alphabetical order
---------------------------------
+Some file types allow to pass additional parameters to the file reader.
+These parameters are separated from the file name and other parameters by a question mark (``?``). Parameters have a
+parameter name and a value, both separated by a equal sign (``=``).
+
+For instance the path ``some_file.raw?xsize=1024?ysize=1024?dtype=int32`` is interpreted as file name ``some_file.raw``
+with three parameters named ``xsize`` (value 1024), ``ysize`` (value 1024) and ``dtype`` (value ``int32``).
+
+The file type is recognized from the extension. You can manually select the file type by passing the parameter ``type``
+with an extension described below as value (e.g. ``file.hdf5?type=dm3`` is read as DM3-file even if its has the
+extension of a different file type.
+
+Supported file types are:
+
+Digital Micrograph 3 Files
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:File Extension: ``dm3``
+:Description: Sampling, Acceleration voltage and camera binning are read from file if possible.
+:Parameters: None
+
+Hierarchical Data Format 5
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:File Extension: ``hdf5``, ``h5``
+:Description: Sampling, Acceleration voltage and camera binning must be given in parameters.
+:Parameters: * *dataset* - The name of the dataset (required).
+
+Raw binary files
+^^^^^^^^^^^^^^^^
+
+:File Extension: ``raw``
+:Description: Sampling, Acceleration voltage and camera binning must be given in parameters.
+:Parameters: * *xsize* - Width of the image in pixels(required).
+    * *ysize* - Height of the image in pixels(required).
+    * *dtype* - Datatype (required; numpy compatible description: ``int32``, ``uint16``, ``complex64``, ``float32``, ``F4``, ...)
+    * *offset* - Number of bytes to skip at file head (optional, defaults to 0)
+    * *swap_bytes* - Whether the bytes should be swapped (optional; 0 or 1; defaults to 0)
+
+.. _sec-param_reference:
+
+Parameter reference
+-------------------
+
+This reference gives a description of the parameters. The format field gives the expected type(s) of the parameter.
+The actual types depend on whether the parameters are used in a JSON parameter file or as a Python object.
+The corresponding types are:
+
+    =========== ====================== ===============================
+    Format      JSON parameter file    Python
+    =========== ====================== ===============================
+    None/Null   ``null``               ``None``
+    Boolean     ``false`` or ``true``  ``False`` or ``True``
+    Integer     Number type            Type ``int``
+    String      String type            Type ``str``
+    List        Array type             Type ``list``
+    Dictionary  Object type            Type ``dict`` with ``str`` keys
+    =========== ====================== ===============================
 
 .. _param-adjust_defocus:
 
@@ -74,14 +97,12 @@ adjust_defocus
 ^^^^^^^^^^^^^^
 
 :Parameter: ``adjust_defocus``
-:Type: Optional
+:Type: Optional (default is ``false``)
 :Format: Boolean
 :Description: Switch, which determines whether the object reconstructions should be aligned for defocus variations.
-    All object holograms are propagated to the Gaussian focus. The defocus of the individual holograms is given
-    by the parameters :ref:`param-defocus_first` and :ref:`param-defocus_step`. Due to instabilities of the microscope's
+    Due to instabilities of the microscope's
     stage or lens currents the defocus between the individual exposures of the series might drift. When this switch
-    is set to ``true``, the script tries to propagate all object holograms to a common focus. This parameter
-    defaults to ``false``, if not given.
+    is set to ``true``, the script tries to propagate all object holograms to a common focus.
 
 .. _param-adjust_shift:
 
@@ -89,12 +110,12 @@ adjust_shift
 ^^^^^^^^^^^^
 
 :Parameter: ``adjust_shift``
-:Type: Optional
+:Type: Optional (default is ``true``)
 :Format: Boolean
 :Description: Switch, which determines whether the object reconstructions should be aligned for specimen drift.
     When this switch is set to ``true``, the script tries to propagate all object holograms to a common position during
     the averaging step. This "fine" alignment is performed independently to the "raw" alignment, which is controlled
-    by the parameter :ref:`param-align_roi`. This parameter defaults to ``true``, if not given.
+    by the parameter :ref:`param-align_roi`.
 
 .. _param-adjust_tilt:
 
@@ -102,28 +123,29 @@ adjust_tilt
 ^^^^^^^^^^^
 
 :Parameter: ``adjust_tilt``
-:Type: Optional
+:Type: Optional (default is ``false``)
 :Format: Boolean
 :Description: Switch, which determines whether the object reconstructions should be aligned for drift of the sideband
     position. Such a drift might occur when the voltage supply of the biprism is not stable. Usually this alignment is
-    not needed. This parameter defaults to ``false``, if not given.
+    not needed.
 
 .. _param-align_roi:
 
-align-roi
+align_roi
 ^^^^^^^^^
 
-:Parameter: ``roi``
-:Type: Optional
-:Format: List of four integers or ``null``.
+:Parameter: ``align_roi``
+:Type: Optional (by default region from parameter :ref:`param-roi` is taken)
+:Format: List of four integers
 :Unit: Pixels
 :Description: ``[left, top, right, bottom]`` pixel positions of the region used for raw alignment of the object
     holograms. This region can be specified independently from the reconstruction region (as given by :ref:`param-roi`).
 
-    If this parameter is set to ``null``, no raw alignment is performed.
+    If this parameter is not given the reconstruction region :ref:`param-roi` is also used for raw alignment.
 
-    If this parameter is not given the
-    reconstruction region :ref:`param-roi` is also used for raw alignment.
+    .. deprecated:: 1.1
+        Setting this parameter to ``null`` disables the raw alignment. Set the parameter :ref:`param-enable_raw_alignment`
+        to ``false`` instead.
 
 .. _param-binning:
 
@@ -131,7 +153,7 @@ binning
 ^^^^^^^
 
 :Parameter: ``binning``
-:Type: Optional
+:Type: Optional (taken from input files by default).
 :Format: Integer
 :Description: Binning used for recording of the holograms. This parameter affects, how the parameterization of the MTF
     (see :ref:`param-mtf`) is interpreted. If this parameter is not given, the binning is taken from the image files.
@@ -164,10 +186,8 @@ cut_off
     sideband in Fourier space is done. This is typically the radius of the mask used. The smaller this is chosen,
     the lower the resolution of the reconstructions will be. However, smaller values will spatially average the
     reconstructions more, thus decreasing the noise present in the holograms (at the cost of larger spatial correlations).
-
     This value specified by this parameter is also taken as cut-off frequency for the low pass used in the raw alignment
     step. For the raw alignment low pass, always a hard aperture (edge function) is taken.
-
     Please note, that if a wrong :ref:`param-sampling` is specified, the value of this parameter does not refer to the
     correct spatial frequency.
 
@@ -177,15 +197,13 @@ defocus_first
 ^^^^^^^^^^^^^
 
 :Parameter: ``defocus_first``
-:Type: Optional
+:Type: Optional (default is 0.0 nm)
 :Format: Floating point number
 :Unit: Nanometers
 :Description: Defocus of first object hologram (hologram with index given by :ref:`param-object_first`).
     Negative focus values refer to underfocus. The reconstructed (averaged) object hologram is propagated to the
     Gaussian focus (i.e. defocus of zero) during reconstruction. No propagation of the reconstructed hologram is
     performed, when the defocus of an hologram is given as zero. The empty holograms are never propagated.
-    Defaults to 0.0 nm.
-
     Please note that if the sampling of the holograms (see :ref:`param-sampling`) or the acceleration voltage (see
     :ref:`param-voltage`) are wrongly specified, the propagation will be performed wrongly. Also note, that if the
     defocus is specified wrongly, the holograms will be be propagated to a different focus than the Gaussian one.
@@ -196,7 +214,7 @@ defocus_step
 ^^^^^^^^^^^^^
 
 :Parameter: ``defocus_step``
-:Type: Optional
+:Type: Optional (default is 0.0 nm)
 :Format: Floating point number
 :Unit: Nanometers
 :Description: Step of defocus between consecutive object holograms in the series. This is intended for the
@@ -209,7 +227,7 @@ empty_exclude
 ^^^^^^^^^^^^^^
 
 :Parameter: ``empty_exclude``
-:Type: Optional
+:Type: Optional (default is empty list)
 :Format: List of integers
 :Description: A list of empty hologram indices, which should **not** be used for averaging. See
     :ref:`param-object_exclude` for the rationale of this parameter. By default this list is empty and all empty
@@ -276,13 +294,27 @@ empty_size
     parameter. For normalization of the reconstructed object holograms the reconstructed empty hologram is interpolated
     to the size of the object holograms (before its cropped to the :ref:`param-roi` region) by zero-padding.
 
+.. _param-enable_raw_alignment:
+
+enable_raw_alignment
+^^^^^^^^^^^^^^^^^^^^^
+
+:Parameter: ``enable_raw_alignment``
+:Type: Optional (default is ``true``)
+:Format: Boolean
+:Description: Enables the raw alignment. If the raw alignment is disabled, the region of interest is taken from the
+    same area in each hologram of the object hologram series. Otherwise, the region of interest is tracked across the
+    series.
+
+    .. versionadded:: 1.1
+
 .. _param-filter_func:
 
 filter_func
 ^^^^^^^^^^^
 
 :Parameter: ``filter_func``
-:Type: Optional
+:Type: Optional (default is ``"EDGE"``)
 :Format: see below
 :Description: This parameter gives the function that will be used in combination with the parameter
     :ref:`param-cut_off` for masking the sideband in Fourier space. The format of this parameter is either
@@ -320,7 +352,7 @@ object_exclude
 ^^^^^^^^^^^^^^
 
 :Parameter: ``object_exclude``
-:Type: Optional
+:Type: Optional (default is empty list)
 :Format: List of integers
 :Description: A list of object hologram indices, which should **not** be used for averaging. Usually all holograms
     with indices between :ref:`param-object_first` and :ref:`param-object_last` (inclusive) are used for averaging. Any indices
@@ -389,15 +421,14 @@ only_phase
 ^^^^^^^^^^
 
 :Parameter: ``only_phase``
-:Type: Optional
+:Type: Optional  (default is ``false``)
 :Format: Boolean
 :Description: Switch, which determines how the object reconstructions are normalized. When this parameter is ``true``,
     the normalization is performed by dividing the individual reconstructed object holograms by the reconstructed
     (and averaged) empty hologram. This normalizes the object holograms in amplitude in phase. However, if the
     reconstructed empty hologram contains regions, where the amplitude is very small, the normalization will cause
     artifacts. Such cases typically occur when the interference region, does not cover the whole image.
-    When this parameter is ``false`` only the phases of the reconstructed holograms are normalized. This parameter
-    defaults to ``false``, if not given.
+    When this parameter is ``false`` only the phases of the reconstructed holograms are normalized.
 
 .. _param-output:
 
@@ -415,11 +446,10 @@ output_aligned
 ^^^^^^^^^^^^^^
 
 :Parameter: ``output_aligned``
-:Type: Optional
+:Type: Optional (default is ``false``)
 :Format: Boolean
 :Description: When set to ``true``, the region of interest of the individual object holograms (before
     reconstruction) are also stored in the output file.
-    This parameter defaults to ``false``, if not given.
 
 .. _param-output_series:
 
@@ -427,12 +457,11 @@ output_series
 ^^^^^^^^^^^^^^
 
 :Parameter: ``output_series``
-:Type: Optional
+:Type: Optional (default is ``false``)
 :Format: Boolean
 :Description: When set to ``true``, also the individual object hologram reconstructions are stored in the output file.
     The averaged hologram (and the variance estimation obtained during averaging) are always stored in the output file.
     The individual reconstructions of the empty hologram series are never stored.
-    This parameter defaults to ``false``, if not given.
 
 .. _param-path:
 
@@ -440,7 +469,7 @@ path
 ^^^^
 
 :Parameter: ``path``
-:Type: Optional
+:Type: Optional (default is none)
 :Format: String
 :Description: Path to prefix to all file names. If this is not an absolute path, the path is taken relative to the path
     of the parameter file (current directory, if the parameters are read from *stdin*. By default this path is left
@@ -453,7 +482,7 @@ roi
 ^^^
 
 :Parameter: ``roi``
-:Type: Optional
+:Type: Optional (default is full image region)
 :Format: List of four integers.
 :Unit: Pixels
 :Description: ``[left, top, right, bottom]`` pixel positions of the region of interest (ROI) in the first object
@@ -476,7 +505,7 @@ sampling
 ^^^^^^^^
 
 :Parameter: ``sampling``
-:Type: Optional
+:Type: Optional (taken from input files by default)
 :Format: Floating point number
 :Unit: Nanometer per pixel
 :Description: Sampling of the object and empty holograms. The number given by this parameter corresponds to the size
@@ -508,7 +537,7 @@ synthesize_empty
 ^^^^^^^^^^^^^^^^
 
 :Parameter: ``synthesize_empty``
-:Type: Optional
+:Type: Optional (default is ``false``)
 :Format: Boolean
 :Description: When set to ``true``, the reconstructed object hologram series is normalized by a synthetic empty
     hologram instead of an experimental empty hologram. The synthesized empty hologram is calculated from the provided
@@ -522,7 +551,7 @@ voltage
 ^^^^^^^^
 
 :Parameter: ``voltage``
-:Type: Optional
+:Type: Optional (taken from input files by default)
 :Format: Floating point number
 :Unit: Kilovolts
 :Description: Acceleration voltage used during acquisition of the holograms. If this parameter is not given it is taken
