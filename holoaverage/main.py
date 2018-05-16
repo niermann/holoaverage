@@ -22,15 +22,16 @@ import numpy as np
 import json
 import io
 
-from holoaverage.defocus import propagate
+from .defocus import propagate
 from .series import DataSet, LazyLoadingSeries
-from .hdf5 import saveHDF5, loadHDF5
+from .hdf5 import saveHDF5
 from .reconstruction import series_reconstruction, holo_reconstruction
 from .average import holoAverage
 from .rawalign import rawAlign, extractROI
 from .camera import ParameterizedMTF
 from .jsoncleaner import remove_trailing_commas, remove_comments
 from .filter import FilterFunction
+
 
 def print_syntax(prog_name):
     print('Syntax:')
