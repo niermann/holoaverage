@@ -33,7 +33,7 @@ as zip-archive from the DOI `10.14279/depositonce-6674 <https://doi.org/10.14279
 
 Unzip the contents into a directory. You will see that actually two hologram
 series are contained, one with the GaN crystal in one partial wave. These are the files ``a1_001.dm3``, ``a1_002.dm3``,
-``a1_003.dm3``, etc.
+``a1_003.dm3``, ... .
 
 .. image:: images/a1-fft.png
         :align: center
@@ -388,22 +388,22 @@ Starting the script
 -------------------
 
 When correctly installed, the script should be executable from the console. Change into the directory, where your
-tutorial data files
+tutorial data files are located:
 
-::
+.. code-block:: none
 
         cd directory-with-data-files
 
 Now call the holoaverage script and supply the name of the parameter file ``holoaverage-a1.json`` to it as argument.
 The switch ``-v`` is optional, and enables verbose output.
 
-::
+.. code-block:: none
 
         holoaverage -v holoaverage-a1.json
 
 The script now should start with the reconstruction and averaging and should output something like:
 
-::
+.. code-block:: none
 
     Loading parameters from
             directory-with-data-files/holoseries-param.json
@@ -417,7 +417,7 @@ The script now should start with the reconstruction and averaging and should out
 
 and so on. Eventually it should output something like:
 
-::
+.. code-block:: none
 
         Iteration   7: total error=7.502063e+07
 
