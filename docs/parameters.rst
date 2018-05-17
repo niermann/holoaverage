@@ -17,9 +17,9 @@ When a parameter file is provided, *holoaverage* expects it to be in UTF-8 encod
 for details). For parameters from *stdin* it uses the standard Python encoding (you can use the `PYTHONIOENCODING
 <https://docs.python.org/3/using/cmdline.html#envvar-PYTHONIOENCODING>`_ environment variable to override this behavior).
 
-.. _sec-file_names:
+.. _sec-file_pathes:
 
-File names / Dataset names
+File pathes / File formats
 --------------------------
 
 Some parameters are file pathes. All file pathes are relative to the directory, where the parameter file
@@ -277,7 +277,7 @@ empty_override
 :Type: Optional
 :Format: String
 :Description: File name of empty hologram used for normalization. If this parameter is present in the parameter
-    files the empty hologram will be read from this file (see :ref:`sec-file_names` for format) and the parameters
+    files the empty hologram will be read from this file (see :ref:`sec-file_pathes` for format) and the parameters
     :ref:`param-empty_names`, :ref:`param-empty_first`, :ref:`param-empty_last`, and :ref:`param-empty_size` are
     ignored.
 
@@ -474,7 +474,7 @@ path
 :Description: Path to prefix to all file names. If this is not an absolute path, the path is taken relative to the path
     of the parameter file (current directory, if the parameters are read from *stdin*. By default this path is left
     empty, which means all file names are relative to the parameter file path (or the current directory, when the
-    parameters are read from *stdin* (see :ref:`sec-file_names`).
+    parameters are read from *stdin* (see :ref:`sec-file_pathes`).
 
 .. _param-roi:
 

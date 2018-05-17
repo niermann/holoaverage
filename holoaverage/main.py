@@ -16,7 +16,6 @@
 
 from __future__ import print_function
 
-import sys
 import os.path
 import numpy as np
 import json
@@ -412,12 +411,16 @@ def holoaverage(param, basepath="", verbose=0):
         saveHDF5(output_file, var, dataName="variance")
 
 
-def main(argv=sys.argv):
+def main(argv=None):
     """
     Main program
     :param argv: Arguments
     :returns: Exit code
     """
+    if argv is None:
+        import sys
+        argv = sys.argv
+
     arg_index = 1
     param_file = None
     verbose = 0
