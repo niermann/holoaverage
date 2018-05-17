@@ -4,7 +4,8 @@
 from setuptools import setup
 
 # Read version number
-execfile('../holoaverage/version.py')
+with open("holoaverage/version.py") as fp:
+    exec(fp.read())
 
 long_description = """
 Holoaverage is a Python script for the reconstruction and averaging of series of off-axis electron holograms, 
