@@ -27,11 +27,11 @@ is located. If the parameters are read from *stdin*, the pathes are relative to 
 can be changed by setting the :ref:`param-path` parameter.
 
 Within a path forward slashes (``/``) as well as backslashes (``\\``) both are treated as path separators.
-Internally all pathes are normalized to the platform (e.g. backslashes on Windows platforms).
+Internally all pathes are normalized to the platform's separator (e.g. backslashes on Windows platforms).
 
-In JSON strings backslashes are escape sequences, with special meaning. For this reason, if you wan't to write a single
-backslash (like in a Windows path separator) into a JSON string you always have to put in a double backslash.
-The JSON string ``"this\\is\\my\\path"`` becomes the path ``this\is\my\path``.
+In JSON strings the backslash character is used as escape sequences with special meaning. For this reason, if you
+wan't to write a single backslash (like in a Windows path separator) into a JSON string you always have to put in
+a double backslash. For example the JSON string ``"this\\is\\my\\path"`` becomes the path ``this\is\my\path``.
 
 Some file types allow to pass additional parameters to the file reader.
 These parameters are separated from the file name and other parameters by a question mark (``?``). Parameters have a
@@ -102,7 +102,7 @@ adjust_defocus
 :Description: Switch, which determines whether the object reconstructions should be aligned for defocus variations.
     Due to instabilities of the microscope's
     stage or lens currents the defocus between the individual exposures of the series might drift. When this switch
-    is set to ``true``, the script tries to propagate all object holograms to a common focus.
+    is set to ``true``, the program tries to detect defocus deviations in the object hologram series.
 
 .. _param-adjust_shift:
 
@@ -113,9 +113,9 @@ adjust_shift
 :Type: Optional (default is ``true``)
 :Format: Boolean
 :Description: Switch, which determines whether the object reconstructions should be aligned for specimen drift.
-    When this switch is set to ``true``, the script tries to propagate all object holograms to a common position during
-    the averaging step. This "fine" alignment is performed independently to the "raw" alignment, which is controlled
-    by the parameter :ref:`param-align_roi`.
+    When this switch is set to ``true``, the program tries to shift all object holograms to a common position during
+    the averaging step. This "fine" alignment is performed independently from the "raw" alignment, which is controlled
+    by the parameter :ref:`param-enable_raw_alignment`.
 
 .. _param-adjust_tilt:
 
@@ -138,7 +138,7 @@ align_roi
 :Type: Optional (by default region from parameter :ref:`param-roi` is taken)
 :Format: List of four integers
 :Unit: Pixels
-:Description: ``[left, top, right, bottom]`` pixel positions of the region used for raw alignment of the object
+:Description: ``[left, top, right, bottom]`` pixel coordinates of the region used for raw alignment of the object
     holograms. This region can be specified independently from the reconstruction region (as given by :ref:`param-roi`).
 
     If this parameter is not given the reconstruction region :ref:`param-roi` is also used for raw alignment.
@@ -169,7 +169,7 @@ camera_distortions
 :Format: List of two Strings
 :Description: Per pixel displacements due to camera distortions. The optics of the camera itself produce small
     displacements. This parameter contains two filenames. The first filename contains an array with the X-displacement
-    of each pixel the second filename the Y-displacements. The referenced arrays must have the same dimensions as the
+    of each pixel. The second filename contains the Y-displacements. The referenced arrays must have the same dimensions as the
     holograms. The displacements are given in units of pixels. These displacements are only used, if the parameter
     :ref:`param-synthesize_empty` is set.
 
@@ -186,7 +186,7 @@ cut_off
     sideband in Fourier space is done. This is typically the radius of the mask used. The smaller this is chosen,
     the lower the resolution of the reconstructions will be. However, smaller values will spatially average the
     reconstructions more, thus decreasing the noise present in the holograms (at the cost of larger spatial correlations).
-    This value specified by this parameter is also taken as cut-off frequency for the low pass used in the raw alignment
+    The value specified by this parameter is also taken as cut-off frequency for the low pass used in the raw alignment
     step. For the raw alignment low pass, always a hard aperture (edge function) is taken.
     Please note, that if a wrong :ref:`param-sampling` is specified, the value of this parameter does not refer to the
     correct spatial frequency.
@@ -204,7 +204,7 @@ defocus_first
     Negative focus values refer to underfocus. The reconstructed (averaged) object hologram is propagated to the
     Gaussian focus (i.e. defocus of zero) during reconstruction. No propagation of the reconstructed hologram is
     performed, when the defocus of an hologram is given as zero. The empty holograms are never propagated.
-    Please note that if the sampling of the holograms (see :ref:`param-sampling`) or the acceleration voltage (see
+    Please note, that if the sampling of the holograms (see :ref:`param-sampling`) or the acceleration voltage (see
     :ref:`param-voltage`) are wrongly specified, the propagation will be performed wrongly. Also note, that if the
     defocus is specified wrongly, the holograms will be be propagated to a different focus than the Gaussian one.
 
@@ -218,8 +218,8 @@ defocus_step
 :Format: Floating point number
 :Unit: Nanometers
 :Description: Step of defocus between consecutive object holograms in the series. This is intended for the
-    reconstruction, if the hologram series is also a focal series, where every hologram has a different defocus.
-    Defaults to 0.0 nm (all object holograms taken at same defocus).
+    case that the hologram series is also a focal series, where every hologram has a different defocus.
+    Defaults to 0.0 nm (all object holograms were taken at same defocus).
 
 .. _param-empty_exclude:
 
@@ -266,7 +266,7 @@ empty_names
 
     If the parameter ``empty_names`` is not present in the parameter file, no empty hologram series will be
     reconstructed and averaged. In this case, the parameters :ref:`param-empty_first`, :ref:`param-empty_last` are not
-    needed. Furthermore, if parameter :ref:`param-empty_size` is missing, it is substituted by :ref:`param-object_size`.
+    needed.
 
 .. _param-empty_override:
 
@@ -287,12 +287,13 @@ empty_size
 ^^^^^^^^^^^
 
 :Parameter: ``empty_size``
-:Type: Mandatory
+:Type: Optional (default is given by parameter :ref:`param-object_size`)
 :Format: Integer
 :Unit: Pixels
 :Description: Size of the reconstructed empty hologram. See :ref:`param-object_size` for details concerning this
     parameter. For normalization of the reconstructed object holograms the reconstructed empty hologram is interpolated
     to the size of the object holograms (before its cropped to the :ref:`param-roi` region) by zero-padding.
+    If parameter :ref:`param-empty_size` is missing, it is substituted by :ref:`param-object_size`.
 
 .. _param-enable_raw_alignment:
 
@@ -318,14 +319,14 @@ filter_func
 :Format: see below
 :Description: This parameter gives the function that will be used in combination with the parameter
     :ref:`param-cut_off` for masking the sideband in Fourier space. The format of this parameter is either
-    a string given the function name, or a list with the function name as first element and further parameters
+    a string describing the filter function, or a list with the function name as first element and further parameters
     in the remaining list.
 
     If ``filter_func`` is ``"EDGE"``, an edge function is used. This corresponds to a hard mask at the ``cut_off``
-    spatial frequency. If the edge function is chosen you might observe "ringing" artifacts in the reconstructions
+    spatial frequency. If the edge function is chosen, you might observe "ringing" artifacts in the reconstructions
     especially at the borders or at "hot pixels".
 
-    If ``filter_func`` is ``"GAUSSIAN"``, a Gaussian function is used. The Gaussian is chosen, such that a ``1/e``
+    If ``filter_func`` is ``"GAUSSIAN"``, a Gaussian function is used. The Gaussian is chosen such that a ``1/e``
     fall-off is reached at the ``cut_off`` spatial frequency.
 
     If ``filter_func`` is ``["BUTTERWORTH", order]``, a Butterworth function of the given order is used. This
@@ -343,7 +344,7 @@ mtf
 :Type: Optional
 :Format: List
 :Description: Parameterization of the camera MTF. The reconstruction are corrected for the effects of MTF (by
-    dividing the Fourier transformed holograms through the MTF. See :ref:`sec-mtf` for details on the specification
+    dividing the Fourier transformed holograms by the MTF). See :ref:`sec-mtf` for details on the specification
     of this parameter. If this parameter is not given, no MTF correction is performed.
 
 .. _param-object_exclude:
@@ -358,7 +359,7 @@ object_exclude
     with indices between :ref:`param-object_first` and :ref:`param-object_last` (inclusive) are used for averaging. Any indices
     occurring in this list are not used. For example with ``object_first`` of ``1``, ``object_last`` of ``5``, and
     ``object_exclude`` set to ``[3, 4]`` only object holograms with indices ``1``, ``2``, and ``5`` are used, since
-    indices ``3`` and ``4`` were explicitly excluded. By default this list is empty and all object holograms in the
+    indices ``3`` and ``4`` were explicitly excluded. By default, this list is empty and all object holograms in the
     given range are used.
 
 .. _param-object_first:
@@ -412,7 +413,7 @@ object_size
 :Description: Size of the reconstructed object hologram. Reconstructed holograms always have same size in width and
      height. This size in pixels is given by this parameter. The :ref:`param-roi` of the object holograms is scaled
      to this size during the reconstruction (by cropping in Fourier space). This parameter should be larger than the
-     diameter mask used during the reconstruction as given by the :ref:`param-cut_off` parameter. For performance
+     diameter of filter used during the reconstruction (see :ref:`param-cut_off` parameter). For performance
      reasons a number with low prime factors should be chosen, e.g. prefer ``384 = 3 * 2^7`` over ``383`` (prime).
 
 .. _param-only_phase:
@@ -428,7 +429,7 @@ only_phase
     (and averaged) empty hologram. This normalizes the object holograms in amplitude in phase. However, if the
     reconstructed empty hologram contains regions, where the amplitude is very small, the normalization will cause
     artifacts. Such cases typically occur when the interference region, does not cover the whole image.
-    When this parameter is ``false`` only the phases of the reconstructed holograms are normalized.
+    When this parameter is ``true``, only the phases of the reconstructed holograms are normalized.
 
 .. _param-output:
 
@@ -472,9 +473,9 @@ path
 :Type: Optional (default is none)
 :Format: String
 :Description: Path to prefix to all file names. If this is not an absolute path, the path is taken relative to the path
-    of the parameter file (current directory, if the parameters are read from *stdin*. By default this path is left
+    of the parameter file (current directory, if the parameters are read from *stdin*). By default this path is left
     empty, which means all file names are relative to the parameter file path (or the current directory, when the
-    parameters are read from *stdin* (see :ref:`sec-file_pathes`).
+    parameters are read from *stdin*; see :ref:`sec-file_pathes`).
 
 .. _param-roi:
 
@@ -485,7 +486,7 @@ roi
 :Type: Optional (default is full image region)
 :Format: List of four integers.
 :Unit: Pixels
-:Description: ``[left, top, right, bottom]`` pixel positions of the region of interest (ROI) in the first object
+:Description: ``[left, top, right, bottom]`` pixel coordinates of the region of interest (ROI) in the first object
     hologram (as given by parameter :ref:`param-object_first`). The ROI is always a rectangular region. In the raw
     alignment step (:ref:`sec-overview`) of the hologram series the position of this ROI is aligned to the drift of the object,
     such that always the same object region is taken from each hologram.
@@ -563,10 +564,10 @@ voltage
 Modulation Transfer Function
 ----------------------------
 
-The modulation transfer function (MTF) of the camera used for acquisition of the individual holograms can is specified
+The modulation transfer function (MTF) of the camera used for acquisition of the individual holograms is specified
 in parameterized form.
 
-In the following it is assumed the MTF is a 2 dimensional function :math:`M(q_x, q_y)` of the
+In the following, it is assumed the MTF is a 2 dimensional function :math:`M(q_x, q_y)` of the
 two dimensional spatial frequency :math:`(q_x, q_y)`. A spatial frequency of +/-0.5 gives the Nyquist frequency of the
 detector. The MTF consists then of two parts, one due to the binning into pixels, and the other part due to the beam
 broadening within the detector/scintillator.
@@ -585,7 +586,7 @@ The beam broadening in the above parameterization is described by a sum over fun
     q = \sqrt{q_x^2 + q_y^2}.
 
 These functions are specified in the parameter file as a list of terms, where each term describes one function
-:math:`f_n(q)`. The term itself are again lists, where the first element always is a string describing the kind of
+:math:`f_n(q)`. The terms itself are again lists, where the first element always is a string describing the kind of
 function and the other elements are parameters to the function.
 
 Possible terms are:
@@ -610,7 +611,7 @@ As example, if the MTF of the detector is given by:
     .. math::
         M(q_x, q_y) = \mathrm{sinc}(q_x) \mathrm{sinc}(q_y) \left[ 0.8 \exp(-0.03 q^2) + 0.2 \right]
 
-the parameterization specified in the :ref:`param-mtf` parameter is
+the parameterization as specified by the :ref:`param-mtf` parameter is
 
 ::
 
