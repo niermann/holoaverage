@@ -1,11 +1,11 @@
 About
 =====
 
-Holoaverage is a Python script for the reconstruction and averaging of series of off-axis electron holograms, typically
-recorded in transmission electron holograms. The averaging is performed iteratively, such that instabilities of
+Holoaverage is a Python program for the reconstruction and averaging of series of off-axis electron holograms
+recorded in a transmission electron microscope. The averaging is performed iteratively, such that instabilities of
 the microscope, like specimen and biprism drifts, can be tracked and corrected between consecutive exposures.
 
-The script is written and maintained by Tore Niermann (email: tore.niermann@tu-berlin.de).
+The program is written and maintained by Tore Niermann (email: tore.niermann@tu-berlin.de).
 
 Details on the usage can be found in the documentation. The documentation can be
 found at
@@ -15,7 +15,7 @@ found at
 Citation
 --------
 
-When you use the script in your research work, please cite the paper describing the details of the averaging method.
+When you use the program in your research work, please cite the paper describing the details of the averaging method.
 The details can be found in
 
         | T. Niermann and M. Lehmann
@@ -25,7 +25,7 @@ The details can be found in
 
 The BibTeX entry for the paper is:
 
-::
+.. code-block:: bib
 
     @article{Niermann2014,
         title = "Averaging scheme for atomic resolution off-axis electron holograms",
@@ -44,7 +44,7 @@ The BibTeX entry for the paper is:
 Installation
 ------------
 
-The script is a Python script. Thus, a working Python distribution is required for running it. It is designed
+The program is a Python program. Thus, a working Python distribution is required for running it. It is designed
 to run under Python 2.7 and Python 3. Beside the Python interpreter it requires the following
 packages:
 
@@ -56,18 +56,18 @@ packages:
 The package is tested with Python versions 2.7 and 3.5, numpy version 1.11.0, scipy version 0.18.0, h5py version 2.6.0
 and version PyFFTW 0.10.4.
 
-The package can be most conveniently using the ``pip`` package manager. Make sure you have Python installed (either 2.X
+The package can be most conveniently installed using the ``pip`` package manager. Make sure you have Python installed (either 2.X
 or 3.X) and the ``pip`` program is in your path. Go to the command line and execute (if you use Python 2.7 use ``pip``
 instead of ``pip3``).
 
-::
+.. code-block:: none
 
     pip3 install --upgrade holoaverage
 
 Holoaverage leverages the pyFFTW package for speed. If pyfftw can not be installed you can still use holoaverage
 without problems. You can install pyFFTW by (with Python 2.7 again use ``pip`` instead of ``pip3``)
 
-::
+.. code-block:: none
 
     pip3 install --upgrade pyfftw
 
@@ -87,9 +87,9 @@ When `reporting a bug <https://github.com/niermann/holoaverage/issues>`_ please 
 License
 -------
 
-::
+.. code-block:: none
 
-    Holoaverage, script for reconstruction and averaging of electron holograms
+    Holoaverage, program for reconstruction and averaging of electron holograms
     Copyright (C) 2018 Tore Niermann
 
     This program is free software: you can redistribute it and/or modify

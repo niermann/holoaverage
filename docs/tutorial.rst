@@ -23,7 +23,9 @@ Other microscopy software provides similiar capabilities to evaluate your data a
 Furthermore a text editor is needed for writing and editing the parameter files provided to *holoaverage*.
 You can use your favorite text editor for this (this is not the same as word processing software), just make sure
 you save your files in "UTF-8" encoding (e.g. when you use Windows' notepad for this, select "UTF-8" in the encoding
-field in the save dialog).
+field in the save dialog; see the article on `Wikipedia <https://en.wikipedia.org/wiki/UTF-8>`_, if you want to learn
+more about encoding).
+
 
 Data files
 ----------
@@ -39,7 +41,7 @@ series are contained, one with the GaN crystal in one partial wave. These are th
         :align: center
 
 The other hologram series was obtained without an object in the beam and is used for normalization (flat-field
-correction). These are the files ``empty_001.dm3``, ``empty_002.dm3``, etc.
+correction). These are the files ``empty_001.dm3``, ``empty_002.dm3``, ... .
 
 .. image:: images/empty-fft.png
         :align: center
@@ -49,7 +51,12 @@ correction). These are the files ``empty_001.dm3``, ``empty_002.dm3``, etc.
 Overview
 --------
 
-The script performs roughly these steps:
+The main input to the program is a series of object holograms. Off-axis holograms interfere two regions
+of the specimen. In object holograms one of these regions is the area of interest, the other is the reference
+region (typically a vacuum area). This is in contrast to empty holograms, where
+typically both regions only contain vacuum.
+
+The program performs roughly these steps:
 
     1. Reconstruction of empty hologram series
     2. Alignment and averaging of the reconstructed empty holograms
@@ -58,8 +65,8 @@ The script performs roughly these steps:
     5. Flat field correction of the reconstructed object holograms by the averaged empty hologram
     6. Alignment and averaging of the reconstructed object holograms
 
-The alignment and averaging steps of both hologram series, are done iteratively. Details on the alignment procedure
-can be found in
+The alignment and averaging steps of both hologram series are done iteratively. Details on the program flow are
+given in the section :ref:`sec-overview`. Details on the whole alignment procedure can be found in
 
         | T. Niermann and M. Lehmann
         | Averaging scheme for atomic resolution off-axis electron holograms
@@ -87,7 +94,7 @@ Copy the following text into this file and save it under the name ``holoaverage-
 the parameter file freely, however we will assume you called it ``holoaverage-a1.json`` in the following.
 We will discuss the meaning of the most important parameters in the following.
 A thorough reference for all parameters can be found in the Section :ref:`sec-parameters` of the
-documentation. Lines beginning with double slashes (i.e. ``//`` are comments and are ignored by the script).
+documentation. Lines beginning with double slashes (i.e. ``//``) are comments and are ignored by the program.
 
 ::
 
@@ -125,7 +132,7 @@ documentation. Lines beginning with double slashes (i.e. ``//`` are comments and
         // Size (in px) used for reconstruction of "object" holograms Required.
         "object_size" : 384,
 
-        // X, Y Position of side band in FFT pixels (origin is in center). Required.
+        // X, Y Position of sideband in FFT pixels (origin is in center). Required.
         "sideband_pos" : [1136, 1304],
 
         // Reconstruction region in pixels (L, T, R, B). Defaults to full region.
@@ -179,19 +186,19 @@ holograms, i.e. ``a1_XXX.dm3``, and the series of the empty holograms, i.e. ``em
 
 Our holograms have filenames starting with ``a1_``, followed by a three digit number, and have the extension
 ``.dm3``. The ``%03d`` in the filename describes, how the number is encoded in the filename (here 3 digits, zero
-padded). If our filenames, for instance, would be called ``a1.1.dm3``, ``a1.2.dm3``, ``a1.3.dm3`` etc, we would set
-the :ref:`param-object_names` parameter to ``a1.%d.dm3``, where the ``%d`` would mean just a decimal number. If you
-interested, how to encode other numbers, look at the `old-style formating rules of python
+padded). If our filenames, for instance, would be called ``a1.1.dm3``, ``a1.2.dm3``, ``a1.3.dm3`` ..., we would set
+the :ref:`param-object_names` parameter to ``a1.%d.dm3``, where the ``%d`` would mean just a decimal number with as
+many digits as needed. If you interested, how to encode other numbers, look at the `old-style formating rules of python
 <http://docs.python.org/3/library/stdtypes.html#old-string-formatting>`_.
 
-The next two parameters give the range of numbers enclosed in the series:
+The next two parameters give the range of numbers contained within the series:
 
 ::
 
         "object_first" : 1,
         "object_last" : 20,
 
-The series starts at index ``1`` and ends at index ``20`` (inclusive).
+Here, the series starts at index ``1`` and ends at index ``20`` (inclusive).
 
 The next parameters describe, how the empty hologram series is named. These parameters follow the same conventions
 as the parameters described above.
@@ -205,20 +212,25 @@ as the parameters described above.
 The microscope parameters
 -------------------------
 
-The example holograms provided here, are not correctly calibrated. The holograms were recorded using a non standard
+The example holograms provided here are not correctly calibrated. The holograms were recorded using a non standard
 setup of the microscope, which is not correctly identified by the recording software. For this reason it is needed to
-provide the correct calibration to the *holoaverage* script. Since the material recorded in the holograms is well known
-the reflections in the Fourier transforms of the holograms can be used for calibration. The correct calibration is
-provided by the parameter :ref:`param-sampling` and gives the size of one pixel in nanometers.
+provide the correct calibration to the *holoaverage* program. The correct calibration is specified by the parameter
+:ref:`param-sampling` and gives the size of one pixel in nanometers. When the :ref:`param-sampling` parameter is
+present, it overrides any calibrations from the image files. If the parameter is not present in the parameter file, the
+calibrations are taken from the image files.
+
+Here, the material recorded in the holograms is well known, thus the reflections in the Fourier transforms of the
+holograms were used for calibration. The following setting makes the correct calibration known to the program
 
 ::
 
         "sampling" : 0.00519824,
 
-When this parameter is present, it overrides any calibrations from the image files. If the parameter is not present
-in the parameter file, the calibrations from the image files is used.
 
-The *holoaverage* script also has to know the acceleration voltage of the microscope. In this case, it could also read
+If you are used to Digital Micrograph, you can find the sampling of an image under "Calibrations" in the "ImageDisplay..."
+dialog available, when you right-click an image.
+
+The *holoaverage* program also has to know the acceleration voltage of the microscope. In this case, it could also read
 it from the image files itself (i.e. omitting this parameter). Nevertheless, we provide it here in kilovolts:
 
 ::
@@ -226,10 +238,10 @@ it from the image files itself (i.e. omitting this parameter). Nevertheless, we 
         "voltage": 300,
 
 In this case the object series is a holographic focal series, which means the defocus is changing from hologram to
-hologram. The *holoaverage* script will propagate all holograms to the Gaussian focus. The parameter
+hologram. The *holoaverage* program will propagate all holograms to the Gaussian focus. The parameter
 :ref:`param-defocus_first` gives the defocus of the first hologram (given by :ref:`param-object_first`) in nanometers
-(underfocus is negative). The parameter :ref:`param-defocus_step` the increment / decrement of the defocus between two
-consecutive images of the series. Here the first hologram is taken with a defocus of (estimated) 20 nanometers, the
+(overfocus is positive). The parameter :ref:`param-defocus_step` gives the increment / decrement of the defocus between
+two consecutive images of the series. Here the first hologram is taken with a defocus of (estimated) 20 nanometers, the
 second with a defocus of (estimated) 18 nanometers. So the defocus is decremented by 2 nanometers, between two
 consecutive acquisitions:
 
@@ -241,13 +253,13 @@ consecutive acquisitions:
 Please note, that the reconstructions are propagated to the Gaussian focus (defocus 0 nm), as given by the defocus
 parameters above. When wrong parameters are provided, this the target focus is not the Gaussian focus. The resulting
 holograms can nevertheless propagated to a different focus afterwards. If no defocus parameters are provided, no
-propagation is performed.
+propagation is performed, and the program averages all reconstructed holograms as they are.
 
 The final parameter describing the microscope, is the modulation transfer function (MTF) of the camera. This
-MTF must be provided to the *holoaverage* script. As it is practice in most labs to describe the MTF as a
-parameterization of some simple functions, this parameterization can be directly provided to the script. This
+MTF must be provided to the *holoaverage* program. As it is practice in most labs to describe the MTF as a
+parameterization of some simple functions, this parameterization can be directly provided to the program. This
 description is documented in Section :ref:`sec-mtf`. For this tutorial we simply pass the provided MTF to the
-script. If you don't know the MTF of your detector, you can omit this parameter in the parameter file. Obviously
+program. If you don't know the MTF of your detector, you can omit this parameter in the parameter file. Obviously
 no MTF correction is performed in this case.
 
 ::
@@ -260,26 +272,26 @@ no MTF correction is performed in this case.
 Reconstruction parameters
 -------------------------
 
-The *holoaverage* script has to know, what the carrier frequency of your hologram is. This carrier frequency is most
+The *holoaverage* program has to know the carrier frequency of your hologram. This carrier frequency is most
 conveniently identified as the position of the sideband in one of the Fourier transformed empty holograms. In Digital
-Micrograph you can use the *point ROI tool*. This is the central tool button in the *ROI toolbar* (if this toolbar
-is not visible, enable it in the "Toolbars" tab of the "Window/Customize..." dialog):
+Micrograph you can use the *point ROI tool*. This is the central tool button in the *ROI toolbar* looking like a cross-hair
+(if this toolbar is not visible, enable it in the "Toolbars" tab of the "Window/Customize..." dialog):
 
 .. image:: images/roi-tools.png
         :align: center
 
-Selecting the center of the desired side band allows to read out the coordinates of the side band. Which of the two
-side bands is the correct one, depends on the convention you use for your phase and on which side of the biprism your
-object was located. We use the convention, that the phase shift increases with increasing specimen thickness. In this
-case the correct sideband is the one, which is located on the side of the biprism filament, where the **reference**
+Selecting the center of the desired sideband allows to read out the coordinates of the sideband. Which of the two
+sidebands is the correct one, depends on the convention you use for your phase and on which side of the biprism your
+object was located. We use the convention that the phase shift increases with increasing specimen thickness. In this
+case, the correct sideband is the one, which is located on the side of the biprism filament, where the **reference**
 wave passed. In this GaN example, the biprism filament was oriented in 8 to 2 o'clock orientation. The object partial
 wave passed the top side of the filament, the reference partial wave the bottom side. Thus we select the **lower** side
-band here.
+band here, located in the 5 o'clock position.
 
 .. image:: images/sideband-marker-combined.png
         :align: center
 
-With the marker positioned on the side band, the coordinates of the side band can be read in the "Control" panel (if not
+With the marker positioned on the sideband, the coordinates of the sideband can be read in the "Control" panel (if not
 visible, enable it in the "Window/Floating Window" drop down menu). The "Control" panel actually has two modes, either
 showing the position in calibrated units (see left part of the above figure) or as pixel position (right part of the
 above figure). You can toggle the mode by clicking on the little scalebar in the "Target" panel (in the
@@ -291,17 +303,17 @@ is given by the :ref:`param-sideband_pos` parameter as X and Y coordinates:
         "sideband_pos" : [1136, 1304],
 
 When the sideband is masked out in the reconstruction step, the size and form of the aperture used must be specified.
-For this the radius of the mask is needed and the type of mask. The radius of the mask is chosen, such that the side
-band is well separated from the central band, and all reflections are included within the radius.
+For this the radius of the mask and the type of the mask are needed. The radius of the mask is chosen, such that the
+sideband is well separated from the central band, and all reflections are included within the radius.
 
 .. image:: images/cutoff-recosize.png
         :align: center
 
 In the figure above, the radius of the red circle is 14.5 1/nm (measured using the Fourier transformed image, after
 recalibration; see ``sampling`` parameter above). This radius in reciprocal nanometers is given by the
-:ref:`param-cut_off` parameter. Here we use an aperture with a soft edge, which is specified by providing the string
-``"BUTTERWORTH"`` and the order of the Butterworth function as :ref:`param-filter_func` parameter. For a hard edge,
-simply provide the string ``"EDGE"`` instead of the squared parenthesis.
+:ref:`param-cut_off` parameter. Here, we use an aperture with a soft edge, which is specified by providing the string
+``"BUTTERWORTH"`` and the order of the Butterworth function (here ``14``) as :ref:`param-filter_func` parameter. For a
+hard edge, simply provide the string ``"EDGE"`` instead of the squared parenthesis.
 
 ::
 
@@ -325,27 +337,30 @@ the series. In this cases it might be meaningful to only reconstruct a sub regio
 .. image:: images/roi-selection.png
         :align: center
 
-This region is provided to the image script as :ref:`param-roi` parameter. This region of interest (ROI) is defined
+This region is provided to the image program as :ref:`param-roi` parameter. This region of interest (ROI) is defined
 as rectangular area in the first object hologram. During the raw-alignment step of the reconstruction, this region
-is tracked and the same sub-region is extracted from the consecutive object holograms. The top, left and bottom, right
-corner are provided to the script in pixel coordinates. As shown in the above figure, the "Control" panel can be used
-to determine these coordinates, by clicking on the respective corners of the rectangle in the panel. The coordinates
-are given as left, top, right, bottom. Here only the central 7/8 of the holograms are used:
+is tracked and the same sub-region is extracted from the consecutive object holograms. The left, top, bottom, and right
+borders are provided to the program in pixel coordinates. As shown in the above figure, the "Control" panel can be used
+to determine these coordinates, by clicking on the respective corners of the rectangle in the panel. Here only the
+central 7/8 of the holograms are used, the coordinates are given as left (128), top (128), right (1920), and bottom (1920):
 
 ::
 
         "roi" : [128, 128, 1920, 1920],
 
 If this parameter is omitted, the whole hologram area is used for reconstruction.
-Please note that also the region used for raw alignment can be specified explicitly using the :ref:`param-align_roi`
-parameter.
+Please note, that also the region used for raw alignment can be specified explicitly using the :ref:`param-align_roi`
+parameter. Alternatively, the raw alignment can be disabled by setting the :ref:`param-enable_raw_alignment` parameter
+to ``false``.
 
 The empty hologram series is always reconstructed using the full image region. This is done, for two reasons. For one,
 there is no specimen drift in empty holograms. For another, the reconstructed empty hologram is used to remove some
 distortions of the camera and the projection system of the microscope. This are fixed to the camera pixels.
-The flat-field correction done with the object holograms is made with the corresponding sub-region (tracked for
+The normalization of the object holograms is made with the corresponding sub-region (tracked for
 specimen drift) of the reconstructed empty hologram. This requires the empty hologram reconstruction to cover the whole
-image area. For this reason the reconstruction size of the empty holograms can be chosen independently, and is made a
+camera area.
+
+The reconstruction size of the empty holograms can be chosen independently, and is made a
 little bit larger here:
 
 ::
@@ -359,7 +374,7 @@ identically to the ``object_size`` parameter.
 Output and averaging
 --------------------
 
-One has to select what drifts are tracked in the averaging step. By default only specimen drift is
+One has to select which drifts are tracked in the averaging step. By default only specimen drift is
 tracked and adjusted. Here we also want to track and adjust for focal variations. These adjustments are
 selected by the following parameters.
 
@@ -369,7 +384,7 @@ selected by the following parameters.
         "adjust_shift" : true
 
 When the interference pattern is smaller than the area of the hologram, the amplitude normalization of the flat-field
-correction might produce strong artifacts. In these cases it might be beneficial to only normalize the phases of the
+correction might produce strong artifacts. In these cases, it might be beneficial to only normalize the phases of the
 reconstructions. This can be adjusted by the :ref:`param-only_phase` parameter. You should also consider to use the
 :ref:`param-align_roi` parameter in cases of smaller interference patterns.
 
@@ -384,24 +399,28 @@ be always HDF5 files, the contents of these files is described in Section :ref:`
 
         "output" : "a1.hdf5",
 
-Starting the script
--------------------
+Starting the program
+--------------------
 
-When correctly installed, the script should be executable from the console. Change into the directory, where your
-tutorial data files are located:
+When correctly installed, the program should be executable from the console. Change into the directory, where your
+tutorial data files are located, using the ``cd`` command of the console. Below it is assumed this directory is
+called ``directory-with-data-files``, so adjust the path ``directory-with-data-files`` below accordingly. Note, you may have
+to enter the absolute path to the directory. Windows user might also have to switch the current drive they are working
+with; for that use the desired drive letter, followed by a colon as command (e.g. ``D:``, if the data is located on
+drive ``D:``) before using the ``cd`` command.
 
 .. code-block:: none
 
         cd directory-with-data-files
 
-Now call the holoaverage script and supply the name of the parameter file ``holoaverage-a1.json`` to it as argument.
-The switch ``-v`` is optional, and enables verbose output.
+Now call the holoaverage program and pass the name of the parameter file ``holoaverage-a1.json`` to it as argument.
+The switch ``-v`` is optional and enables verbose output.
 
 .. code-block:: none
 
         holoaverage -v holoaverage-a1.json
 
-The script now should start with the reconstruction and averaging and should output something like:
+The program now should start with the reconstruction and averaging and should output something like:
 
 .. code-block:: none
 
@@ -414,6 +433,7 @@ The script now should start with the reconstruction and averaging and should out
             [00]  0.000  0.000  0.00000  0.00000   0.000 1.0000 +0.802 2.403186e+09
             [01]  0.000  0.000  0.00000  0.00000   0.000 1.0000 -0.672 2.365461e+09
             [02]  0.000  0.000  0.00000  0.00000   0.000 1.0000 -1.478 2.599820e+09
+    ...
 
 and so on. Eventually it should output something like:
 
@@ -426,7 +446,9 @@ This error number should go down and converge to a stable value within the last 
 Results
 -------
 
-After the script succeeded the outputs can be found in the output file (as given by the :ref:`param-output` parameter).
+After the program succeeded the outputs can be found in the output file as specified by the :ref:`param-output`
+parameter. In the present example the outputs are in the file ``a1.hdf5`` in the same directory as the parameter file.
+
 If you are using Digital Micrograph, there is also a plugin to read HDF5 files, which can be found at
 `<https://github.com/niermann/gms_plugin_hdf5/releases>`_. These outputs should be checked for artifacts.
 
@@ -439,10 +461,10 @@ and amplitude (right) of the empty example series are shown.
 .. image:: images/empty_reco.png
         :align: center
 
-The patterns present in the phase, are the aforementioned camera and projection distortions.
+The patterns present in the phase are the aforementioned camera and projection distortions.
 
-The reconstructed object series is in the dataset ``data`` of the HDF5 file. Here the amplitude (left), phase
-(center), and Fourier transform (right) of the averaged reconstruction.
+The reconstructed object series can be found in the dataset ``data`` of the HDF5 file. Here the amplitude (left), phase
+(center), and Fourier transform (right) of the averaged reconstruction are shown:
 
 .. image:: images/object_reco.png
         :align: center

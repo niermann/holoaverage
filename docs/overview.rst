@@ -6,7 +6,7 @@ The *holoaverage* program is controlled by a parameter file, which is supplied t
 flow of the program is sketched in the following figure, the steps of the program are explained in more
 detail below.
 
-.. image:: images/flow.svg
+.. image:: images/flow.png
         :align: center
 
 .. _sec-object_series:
@@ -40,7 +40,7 @@ possible to exclude images with specific numbers from the series, for instance i
 otherwise unisuitable. This can be achieved by specifying these unwanted image numbers in the list
 :ref:`param-object_exclude`.
 
-For a list of supported image formats see Section :ref:`sec-file_names`. That section also describes, how to specify
+For a list of supported image formats see Section :ref:`sec-file_pathes`. That section also describes, how to specify
 which specific dataset of multi-dataset data formats should be used. The program itself has to know certain metadata
 for the input series. These metadata are the size of one pixel, i.e. the spatial sampling rate, and the used acceleration
 voltage and the camera binning (the later is needed for correction from the modulation transfer function).
@@ -59,7 +59,7 @@ During the acquisition of the series it may happen that the specimen drifts. The
 in the raw alignment step. The phase correlation function (see [Meyer02]_) of the central band between consecutive images
 of the series is used for the detection of these drifts. For selection of the central band a low-pass filter
 is needed. The *holoaverage* program uses the same cut-off frequency for this low-pass as
-for the holographic reconstruction step as given by the Parameter :ref:`param-cut_off`.
+for the holographic reconstruction step as given by the parameter :ref:`param-cut_off`.
 The :ref:`param-cut_off` is given in reciprocal nanometers.
 
 A region of interest (ROI) from which eventually the holograms are reconstructed can be specified by the :ref:`param-roi`
@@ -158,7 +158,7 @@ fluctuations are registered and the effects of the fluctuations adjusted, such t
 can be averaged. Obviously this a-posteriori alignment of the  data is the reasoning behind recording a series instead
 of a single hologram with prolonged exposure.
 
-The tracked and adjusted fluctuations are:
+The tracked and adjusted instabilities are:
 
 * Biprism drift (corresponds to a change of the global phase of the individual hologram of the series).
 * Hologram contrast (corresponds to a change of the global amplitude of the individual hologram of the series).
@@ -208,10 +208,10 @@ Usage
 Command Line
 ------------
 
-A ``holoaverage`` command line script is provided (make sure you're python distribution's
+A ``holoaverage`` command line interface is provided (make sure you're python distribution's
 script directory is in the path).
 
-The ``holoaverage`` script has the following syntax:
+The ``holoaverage`` command line program has the following syntax:
 
 ::
 
@@ -231,7 +231,7 @@ The ``holoaverage`` script has the following syntax:
 Python API
 ----------
 
-Instead of calling the script on the command line, it can be also directly invoked within python. The parameters
+Instead of calling the program on the command line, it can be also directly invoked within python. The parameters
 are passed as a dictionary object to the following function:
 
 .. py:function:: holoaverage.holoaverage(param[, basepath=""][, verbose=0])
