@@ -245,7 +245,7 @@ def holoaverage(param, basepath="", verbose=0):
     output_aligned = bool(param.get('output_aligned', False))
     if ('output_name' not in param) and ('output' in param):
         warnings.warn("The parameter 'output' is deprecated. Use 'output_name' instead.", DeprecationWarning)
-        output_name = os.path.join(path, str(param['output_name']))
+        output_name = os.path.join(path, str(param['output']))
     elif 'output_name' in param:
         output_name = os.path.join(path, str(param['output_name']))
     else:
@@ -423,8 +423,13 @@ def main(argv=None):
     :param argv: Arguments
     :returns: Exit code
     """
+    # Get arguments
     if argv is None:
         argv = sys.argv
+
+    # Enable Deprecation warning by default
+    if not sys.warnoptions:
+        warnings.simplefilter("default", category=DeprecationWarning)
 
     arg_index = 1
     param_file = None
