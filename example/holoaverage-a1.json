@@ -36,12 +36,10 @@
     "roi" : [128, 128, 1920, 1920],
     
     // Region for raw alignment in pixels (L, T, R, B). Defaults to roi.
-    // Set to null for no raw alignment
     //"align_roi" : [256, 256, 1536, 1536],
-    //"align_roi" : null,
-    
-    // Output file (will be HDF5 file). Required.
-    "output" : "a1.hdf5",
+
+    // Output file name (will be HDF5 file). Required.
+    "output_name" : "a1.hdf5",
 
     // Mask type (see FilterFunction for details). Defaults to "EDGE"
     // "filter_func" : "EDGE",

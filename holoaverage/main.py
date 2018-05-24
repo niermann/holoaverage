@@ -234,7 +234,7 @@ def holoaverage(param, basepath="", verbose=0):
         if align_roi is not None:
             align_roi = np.array(align_roi, dtype=int)
         else:
-            warnings.warn("Setting 'align_roi' to 'null' is deprecated. Set the parameter 'enable_raw_align' to false instead", DeprecationWarning)
+            warnings.warn("Setting 'align_roi' to 'null' is deprecated. Set the parameter 'enable_raw_align' to false instead.", DeprecationWarning)
             enable_raw_align = False
     else:
         align_roi = None
@@ -243,9 +243,14 @@ def holoaverage(param, basepath="", verbose=0):
     adjust_tilt = bool(param.get('adjust_tilt', False))
     output_series = bool(param.get('output_series', False))
     output_aligned = bool(param.get('output_aligned', False))
-    output_file = param.get('output')
-    if 'output' in param:
-        output_file = os.path.join(path, str(param['output']))
+    if ('output_name' not in param) and ('output' in param):
+        warnings.warn("The parameter 'output' is deprecated. Use 'output_name' instead.", DeprecationWarning)
+        output_name = os.path.join(path, str(param['output_name']))
+    elif 'output_name' in param:
+        output_name = os.path.join(path, str(param['output_name']))
+    else:
+        output_name = None
+    output_prefix = str(param.get('output_prefix', ''))
     defocus_first = float(param.get('defocus_first', 0.0))
     defocus_step = float(param.get('defocus_step', 0.0))
     empty_exclude = np.array(param.get('empty_exclude', []), dtype=int)
@@ -282,8 +287,8 @@ def holoaverage(param, basepath="", verbose=0):
             empty_sampling = np.ones(2, dtype=float) * sampling
 
         empty = create_synthetic_empty(camera_dev, sideband_pos, empty_size, empty_sampling, mask_type)
-        if output_file:
-            saveHDF5(output_file, empty, dataName="empty")
+        if output_name:
+            saveHDF5(output_name, empty, dataName=output_prefix + "empty")
     elif empty_override is not None:
         empty_override = os.path.join(path, empty_override)
         empty = load_file(empty_override)
@@ -311,8 +316,8 @@ def holoaverage(param, basepath="", verbose=0):
         else:
             empty = empty_holo[0]
 
-        if output_file:
-            saveHDF5(output_file, empty, dataName="empty")
+        if output_name:
+            saveHDF5(output_name, empty, dataName=output_prefix + "empty")
     else:
         if empty_size is None:
             if object_size is None:
@@ -352,8 +357,8 @@ def holoaverage(param, basepath="", verbose=0):
     del data_series
 
     # Save series
-    if output_aligned and output_file:
-        data_rois.saveHDF5(output_file, 'aligned_rois')
+    if output_aligned and output_name:
+        data_rois.saveHDF5(output_name, output_prefix + 'aligned_rois')
 
     # Reconstruct object series
     if object_size is None:
@@ -396,8 +401,8 @@ def holoaverage(param, basepath="", verbose=0):
         rescale_fourier(big_data, out=holo_series[index].array)
 
     # Save series
-    if output_series and output_file:
-        holo_series.saveHDF5(output_file, 'series')
+    if output_series and output_name:
+        holo_series.saveHDF5(output_name, output_prefix + 'series')
 
     # Average series
     defocus = np.array([(index - object_first) * defocus_step + defocus_first for index in object_index])
@@ -406,10 +411,10 @@ def holoaverage(param, basepath="", verbose=0):
     else:
         out = propagate(holo_series[0], defocus[0])
         var = None
-    if output_file:
-        saveHDF5(output_file, out)
-    if output_file and (var is not None):
-        saveHDF5(output_file, var, dataName="variance")
+    if output_name:
+        saveHDF5(output_name, out, dataName=output_prefix + "data")
+    if output_name and (var is not None):
+        saveHDF5(output_name, var, dataName=output_prefix + "variance")
 
 
 def main(argv=None):

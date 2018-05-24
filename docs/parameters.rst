@@ -431,16 +431,6 @@ only_phase
     artifacts. Such cases typically occur when the interference region, does not cover the whole image.
     When this parameter is ``true``, only the phases of the reconstructed holograms are normalized.
 
-.. _param-output:
-
-output
-^^^^^^^^^
-
-:Parameter: ``output``
-:Type: Mandatory
-:Format: String
-:Description: Name of the output file. The output(s) will be always stored in HDF5 format.
-
 .. _param-output_aligned:
 
 output_aligned
@@ -451,6 +441,34 @@ output_aligned
 :Format: Boolean
 :Description: When set to ``true``, the region of interest of the individual object holograms (before
     reconstruction) are also stored in the output file.
+
+.. _param-output_name:
+
+output_name
+^^^^^^^^^^^
+
+:Parameter: ``output_name``
+:Type: Mandatory
+:Format: String
+:Description: Name of the output file. The output(s) will be always stored in HDF5 format.
+
+    .. versionchanged:: 1.1
+        The parameter was renamed from ``output`` to ``output_name``.
+
+.. _param-output_prefix:
+
+output_prefix
+^^^^^^^^^^^^^
+
+:Parameter: ``output_prefix``
+:Type: Optional (Defaults to empty string)
+:Format: String
+:Description: Prefix to dataset names in output file. By using the prefix multiple outputs can be written to the same
+    HDF5 file. Especially forward slashes can be used in :ref:`param-output_prefix` to create the outputs in sub-groups.
+    As example, if the value of ``output_prefix`` would be ``alpha_``, the dataset ``data`` is saved as ``alpha_data``
+    in the output file.
+
+    .. versionadded:: 1.1
 
 .. _param-output_series:
 

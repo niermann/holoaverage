@@ -58,7 +58,7 @@ class TestExamples(unittest.TestCase):
             "defocus_step": -2.0,
             "sideband_pos" : [1136, 1304],
             "roi" : [128, 128, 1920, 1920],
-            "output" : self.touch_temp_output(),
+            "output_name" : self.touch_temp_output(),
             "filter_func" : ["BUTTERWORTH", 14],
             "cut_off" : 12.0,
             "mtf": EXAMPLE_MTF
@@ -68,7 +68,7 @@ class TestExamples(unittest.TestCase):
     def test_GaN_example(self):
         param = self.default_GaN_param()
         holoaverage(param, verbose=self.VERBOSE)
-        with h5py.File(param["output"], "r") as output:
+        with h5py.File(param["output_name"], "r") as output:
             data_convergence = output["data"].attrs["convergence"]
             empty_convergence = output["empty"].attrs["convergence"]
 
@@ -87,7 +87,7 @@ class TestExamples(unittest.TestCase):
         param["object_size"] = 384
         param["empty_size"] = 512
         holoaverage(param, verbose=self.VERBOSE)
-        with h5py.File(param["output"], "r") as output:
+        with h5py.File(param["output_name"], "r") as output:
             data_convergence = output["data"].attrs["convergence"]
             empty_convergence = output["empty"].attrs["convergence"]
 
@@ -109,7 +109,7 @@ class TestExamples(unittest.TestCase):
 
         param = self.default_GaN_param()
         holoaverage(param, verbose=self.VERBOSE)
-        with h5py.File(param["output"], "r") as output:
+        with h5py.File(param["output_name"], "r") as output:
             data_convergence = output["data"].attrs["convergence"]
             empty_convergence = output["empty"].attrs["convergence"]
 
@@ -128,7 +128,7 @@ class TestExamples(unittest.TestCase):
         param["adjust_defocus"] = True
         param["adjust_tilt"] = True
         holoaverage(param, verbose=self.VERBOSE)
-        with h5py.File(param["output"], "r") as output:
+        with h5py.File(param["output_name"], "r") as output:
             data_convergence = output["data"].attrs["convergence"]
             empty_convergence = output["empty"].attrs["convergence"]
 
@@ -148,7 +148,7 @@ class TestExamples(unittest.TestCase):
         param["empty_last"] = 5
         del param["mtf"]
         holoaverage(param, verbose=self.VERBOSE)
-        with h5py.File(param["output"], "r") as output:
+        with h5py.File(param["output_name"], "r") as output:
             data_convergence = output["data"].attrs["convergence"]
             empty_convergence = output["empty"].attrs["convergence"]
 
@@ -164,7 +164,7 @@ class TestExamples(unittest.TestCase):
         param = self.default_GaN_param()
         del param["object_names"]
         holoaverage(param, verbose=self.VERBOSE)
-        with h5py.File(param["output"], "r") as output:
+        with h5py.File(param["output_name"], "r") as output:
             self.assertFalse("data" in output)
             self.assertFalse("variance" in output)
             empty_convergence = output["empty"].attrs["convergence"]
@@ -179,7 +179,7 @@ class TestExamples(unittest.TestCase):
         del param["empty_names"]
         del param["empty_size"]
         holoaverage(param, verbose=self.VERBOSE)
-        with h5py.File(param["output"], "r") as output:
+        with h5py.File(param["output_name"], "r") as output:
             self.assertFalse("empty" in output)
             data_convergence = output["data"].attrs["convergence"]
 
@@ -198,7 +198,7 @@ class TestExamples(unittest.TestCase):
         del param["empty_size"]
         param["empty_override"] = "%s?type=raw?xsize=256?ysize=256?dtype=complex64?offset=100000" % empty_raw
         holoaverage(param, verbose=self.VERBOSE)
-        with h5py.File(param["output"], "r") as output:
+        with h5py.File(param["output_name"], "r") as output:
             self.assertFalse("empty" in output)
             data_convergence = output["data"].attrs["convergence"]
 
@@ -212,7 +212,7 @@ class TestExamples(unittest.TestCase):
         empty_param = self.default_GaN_param()
         del empty_param["object_names"]
         holoaverage(empty_param, verbose=self.VERBOSE)
-        with h5py.File(empty_param["output"], "r") as output:
+        with h5py.File(empty_param["output_name"], "r") as output:
             empty_convergence = output["empty"].attrs["convergence"]
 
         # Test for empty convergence
@@ -223,9 +223,9 @@ class TestExamples(unittest.TestCase):
         # Reconstruct data
         object_param = self.default_GaN_param()
         object_param["empty_names"] = "/dev/null/some_invalid_filename"
-        object_param["empty_override"] = empty_param["output"] + "?dataset=empty"
+        object_param["empty_override"] = empty_param["output_name"] + "?dataset=empty"
         holoaverage(object_param, verbose=self.VERBOSE)
-        with h5py.File(object_param["output"], "r") as output:
+        with h5py.File(object_param["output_name"], "r") as output:
             data_convergence = output["data"].attrs["convergence"]
 
         # Test for data convergence
@@ -239,7 +239,7 @@ class TestExamples(unittest.TestCase):
         param["object_last"] = 1
         param["empty_last"] = 1
         holoaverage(param, verbose=self.VERBOSE)
-        with h5py.File(param["output"], "r") as output:
+        with h5py.File(param["output_name"], "r") as output:
             data = output["data"][...]
             empty = output["empty"][...]
 
@@ -255,7 +255,7 @@ class TestExamples(unittest.TestCase):
         param["object_size"] = 2048
         param["empty_size"] = 2048
         holoaverage(param, verbose=self.VERBOSE)
-        with h5py.File(param["output"], "r") as output:
+        with h5py.File(param["output_name"], "r") as output:
             data = output["data"][...]
             empty = output["empty"][...]
 
@@ -270,7 +270,7 @@ class TestExamples(unittest.TestCase):
         carrier = (np.array(empty_param["sideband_pos"], dtype=float) - 1024) / 2048
         carrier /= np.dot(carrier, carrier)
         holoaverage(empty_param, verbose=self.VERBOSE)
-        with h5py.File(empty_param["output"], "r") as output:
+        with h5py.File(empty_param["output_name"], "r") as output:
             empty = output["empty"][...]
 
         # Create displacements from empty hologram
@@ -287,7 +287,7 @@ class TestExamples(unittest.TestCase):
         object_param["synthesize_empty"] = True
         object_param["camera_distortions"] = [displacement_file + "?dataset=dx", displacement_file + "?dataset=dy"]
         holoaverage(object_param, verbose=self.VERBOSE)
-        with h5py.File(object_param["output"], "r") as output:
+        with h5py.File(object_param["output_name"], "r") as output:
             new_empty = output["empty"][...]
             data_convergence = output["data"].attrs["convergence"]
 
@@ -305,7 +305,7 @@ class TestExamples(unittest.TestCase):
         param["empty_last"] = 5
         param["roi"] = [256, 640, 1792, 1408]
         holoaverage(param, verbose=self.VERBOSE)
-        with h5py.File(param["output"], "r") as output:
+        with h5py.File(param["output_name"], "r") as output:
             data_convergence = output["data"].attrs["convergence"]
             empty_convergence = output["empty"].attrs["convergence"]
 
