@@ -21,6 +21,7 @@ import numpy as np
 import json
 import io
 import warnings
+import sys
 
 from .defocus import propagate
 from .series import DataSet, LazyLoadingSeries
@@ -418,7 +419,6 @@ def main(argv=None):
     :returns: Exit code
     """
     if argv is None:
-        import sys
         argv = sys.argv
 
     arg_index = 1
@@ -471,3 +471,5 @@ def main(argv=None):
     return 0  # Use exit code 0 for success
 
 
+if __name__ == '__main__':
+    sys.exit(main())
