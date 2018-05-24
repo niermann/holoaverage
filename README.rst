@@ -57,7 +57,7 @@ The package is tested with Python versions 2.7 and 3.5, numpy version 1.11.0, sc
 and version PyFFTW 0.10.4.
 
 The package can be most conveniently installed using the ``pip`` package manager. Make sure you have Python installed (either 2.X
-or 3.X) and the ``pip`` program is in your path. Go to the command line and execute (if you use Python 2.7 use ``pip``
+or 3.X) and the ``pip3`` program (``pip2`` for Python 2.X) is in your path. Go to the command line and execute (if you use Python 2.7 use ``pip2``
 instead of ``pip3``).
 
 .. code-block:: none
@@ -65,15 +65,13 @@ instead of ``pip3``).
     pip3 install --upgrade holoaverage
 
 Holoaverage leverages the pyFFTW package for speed. If pyfftw can not be installed you can still use holoaverage
-without problems. You can install pyFFTW by (with Python 2.7 again use ``pip`` instead of ``pip3``)
+without problems. You can install pyFFTW by (with Python 2.7 again use ``pip2`` instead of ``pip3``)
 
 .. code-block:: none
 
     pip3 install --upgrade pyfftw
 
-Up to date source versions can be found on the GitHub site:
-
-    https://github.com/niermann/holoaverage
+Up to date source versions can be found on the GitHub site: https://github.com/niermann/holoaverage
 
 Bug reporting
 -------------
