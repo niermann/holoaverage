@@ -144,8 +144,8 @@ documentation. Lines beginning with double slashes (i.e. ``//``) are comments an
         // Disable raw alignment. Raw alignment is enabled by default.
         //"enable_raw_alignment" : false,
 
-        // Output file (will be HDF5 file). Required.
-        "output" : "a1.hdf5",
+        // Output file name (will be HDF5 file). Required.
+        "output_name" : "a1.hdf5",
 
         // Mask type (see FilterFunction for details). Defaults to "EDGE"
         // "filter_func" : "EDGE",
@@ -392,7 +392,7 @@ reconstructions. This can be adjusted by the :ref:`param-only_phase` parameter. 
 
         "only_phase": false,
 
-Eventually, the filename of the output file must be provided by the :ref:`param-output` parameter. The output will
+Eventually, the filename of the output file must be provided by the :ref:`param-output_name` parameter. The output will
 be always HDF5 files, the contents of these files is described in Section :ref:`sec-outputs`.
 
 ::
@@ -446,7 +446,7 @@ This error number should go down and converge to a stable value within the last 
 Results
 -------
 
-After the program succeeded the outputs can be found in the output file as specified by the :ref:`param-output`
+After the program succeeded the outputs can be found in the output file as specified by the :ref:`param-output_name`
 parameter. In the present example the outputs are in the file ``a1.hdf5`` in the same directory as the parameter file.
 
 If you are using Digital Micrograph, there is also a plugin to read HDF5 files, which can be found at

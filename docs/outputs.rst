@@ -3,10 +3,13 @@
 Outputs
 =======
 
-Within the parameter file the output filename is specified by the :ref:`param-output` parameter. This output file
-will always be a HDF5 file.
+Within the parameter file the output filename is specified by the :ref:`param-output_name` parameter. This output file
+will always be a HDF5 file. The dataset names described below are prefixed by the value of the :ref:`param-output_prefix`
+parameter (which is empty by default). As example, if the value of ``output_prefix`` would be ``alpha_``, the dataset
+``data`` is saved as ``alpha_data`` in the output file. By using the prefix multiple outputs can be written to the same
+HDF5 file.
 
-This file typically holds three datasets:
+The output file typically holds three datasets:
 
 The dataset ``data`` contains the averaged reconstruction of the normalized and drift aligned object holograms. If the defocus value
 for the individual holograms (as specified by the parameters :ref:`param-defocus_first` and :ref:`param-defocus_step`) is
