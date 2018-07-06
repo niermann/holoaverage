@@ -410,7 +410,7 @@ class Series(AbstractSeries):
         first = loader(listOfNames[0])
         if verbose > 0:
             print("Loading...")
-            print("\t%d entities, shape=%s, dtype=%s" % (len(listOfNames), first.shape, first.dtype))
+            print("\t%d datasets, shape=%s, dtype=%s" % (len(listOfNames), first.shape, first.dtype))
             print("\t[%02d] %s" % (0, listOfNames[0]))
         result = Series(len(listOfNames), first.shape, first.dtype)
         result[0] = first
@@ -528,6 +528,10 @@ class LazyLoadingSeries(AbstractSeries):
         """
         # First dataset
         first = loader(listOfNames[0])
+        if verbose > 0:
+            print("Loading...")
+            print("\t%d datasets, shape=%s, dtype=%s" % (len(listOfNames), first.shape, first.dtype))
+            print("\t[%02d] %s" % (0, listOfNames[0]))
         result = LazyLoadingSeries(listOfNames, loader, first.shape, first.dtype)
         # Get known attributes
         keys = list(DataSet.general_attributes)
@@ -536,7 +540,11 @@ class LazyLoadingSeries(AbstractSeries):
             v = first.attrs.get(k)
             if v is not None:
                 result.attrs[k] = v
-        # Insert first and done
+        # Insert first
         result._insert(0, first)
+        # Print other names
+        if verbose > 0:
+            for i in range(1, len(listOfNames)):
+                print("\t[%02d] %s" % (i, listOfNames[i]))
         return result
 
