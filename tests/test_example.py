@@ -23,7 +23,7 @@ class TestExamples(unittest.TestCase):
     GAN_EMPTY_CONVERGENCE_384 = 5.681450e10         # Expected error for 384px empty reconstruction
 
     # Test parameters
-    VERBOSE = 0
+    VERBOSE = 1
     DELETE_OUTPUT = True
 
     def setUp(self):
@@ -196,7 +196,7 @@ class TestExamples(unittest.TestCase):
             np.ones(256 * 256, dtype=np.complex64).tofile(file)
         del param["empty_names"]
         del param["empty_size"]
-        param["empty_override"] = "%s?type=raw?xsize=256?ysize=256?dtype=complex64?offset=100000" % empty_raw
+        param["empty_override"] = "%s?type=raw&xsize=256&ysize=256&dtype=complex64&offset=100000" % empty_raw
         holoaverage(param, verbose=self.VERBOSE)
         with h5py.File(param["output_name"], "r") as output:
             self.assertFalse("empty" in output)

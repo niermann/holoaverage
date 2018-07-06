@@ -73,14 +73,26 @@ def parse_parameters(param):
 
 def load_file(path):
     """Return loader function depending on extension"""
-    # Parse file name
-    parts = path.split("?")
-    filename = parts[0]
-    type = os.path.splitext(parts[0])[1].lower()
+    # Split parameters
+    if "?" in path:
+        filename, param_string = path.split("?", 1)
+
+        # Use "&" as separator of parameters
+        if "?" in param_string:
+            warnings.warn("The use of '?' as separator of dataset parameters is deprecated.", DeprecationWarning)
+            parts = param_string.split("?")
+        else:
+            parts = param_string.split("&")
+    else:
+        filename = path
+        parts = []
+    # Use extension as type
+    type = os.path.splitext(filename)[1].lower()
     if type:
         type = type[1:]
+    # Parse parameters
     param = {}
-    for part in parts[1:]:
+    for part in parts:
         if not part:
             continue
         subparts = part.split('=', 1)
@@ -291,10 +303,12 @@ def holoaverage(param, basepath="", verbose=0):
             saveHDF5(output_name, empty, dataName=output_prefix + "empty")
     elif empty_override is not None:
         empty_override = os.path.join(path, empty_override)
+        if verbose > 0:
+            print("Using empty hologram from\n\t%s" % empty_override)
         empty = load_file(empty_override)
     elif empty_names is not None:
         empty_files = [os.path.join(path, empty_names % index) for index in range(empty_first, empty_last + 1) if index not in empty_exclude]
-        empty_series = LazyLoadingSeries.fromFiles(empty_files, load_file, verbose=1)
+        empty_series = LazyLoadingSeries.fromFiles(empty_files, load_file, verbose=verbose)
         if sampling is not None:
             empty_series.attrs['dim_scale'] = sampling
             empty_series.attrs['dim_unit'] = ['nm'] * 2
@@ -332,7 +346,7 @@ def holoaverage(param, basepath="", verbose=0):
     # Align object wave
     object_index = [index for index in range(object_first, object_last + 1) if index not in object_exclude]
     object_files = [os.path.join(path, object_names % index) for index in object_index]
-    data_series = LazyLoadingSeries.fromFiles(object_files, load_file, verbose=1)
+    data_series = LazyLoadingSeries.fromFiles(object_files, load_file, verbose=verbose)
     if sampling is not None:
         data_series.attrs['dim_scale'] = np.ones(2, dtype=float) * sampling
         data_series.attrs['dim_unit'] = ['nm'] * 2

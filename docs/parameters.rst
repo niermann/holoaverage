@@ -34,11 +34,16 @@ wan't to write a single backslash (like in a Windows path separator) into a JSON
 a double backslash. For example the JSON string ``"this\\is\\my\\path"`` becomes the path ``this\is\my\path``.
 
 Some file types allow to pass additional parameters to the file reader.
-These parameters are separated from the file name and other parameters by a question mark (``?``). Parameters have a
-parameter name and a value, both separated by a equal sign (``=``).
+These parameters are separated from the file name by a question mark (``?``). The parameters itself are separated by an
+ampersand (``&``). Parameters have a parameter name and a value, both separated by a equal sign (``=``).
 
-For instance the path ``some_file.raw?xsize=1024?ysize=1024?dtype=int32`` is interpreted as file name ``some_file.raw``
+.. versionchanged:: 1.1.2
+    Separation of parameters by ampersand (instead of question marks), like in HTTP query strings.
+
+For instance the path ``some_file.raw?xsize=1024&ysize=1024&dtype=int32`` is interpreted as file name ``some_file.raw``
 with three parameters named ``xsize`` (value 1024), ``ysize`` (value 1024) and ``dtype`` (value ``int32``).
+
+
 
 The file type is recognized from the extension. You can manually select the file type by passing the parameter ``type``
 with an extension described below as value (e.g. ``file.hdf5?type=dm3`` is read as DM3-file even if its has the
