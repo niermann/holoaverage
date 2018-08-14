@@ -493,7 +493,3 @@ def main(argv=None):
     # Reconstruct
     holoaverage(param, basepath, verbose=verbose)
     return 0  # Use exit code 0 for success
-
-
-if __name__ == '__main__':
-    sys.exit(main())
