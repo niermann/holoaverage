@@ -125,7 +125,7 @@ class HoloAveraging(object):
                 index = np.unravel_index(n, self._indexShape)
                 shift_px = np.dot(invT, self._shift[index + (Ellipsis,)])
                 tilt_px = np.dot(T, self._tilt[index + (Ellipsis,)])
-                a = self._factor[index].real ** 2 + self._factor[index].imag ** 2
+                a = np.sqrt(self._factor[index].real**2 + self._factor[index].imag**2)
                 p = atan2(self._factor[index].imag, self._factor[index].real)
                 print("\t[%02d] %6.3f %6.3f %8.5f %8.5f %7.3f %6.4f %+6.3f %8e" % (n, shift_px[1], shift_px[0], tilt_px[1], tilt_px[0], self._defocus[index], a, p, self._error[index]))
         if self.verbose > 0:
