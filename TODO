@@ -4,3 +4,4 @@ List of featured which should be implemented at some time
 * Save parameter file to output file
 * Automatic detection of sideband
 * Weighted average
+* Better error messages
