@@ -106,10 +106,11 @@ def fromHermite(arr, shape, axis=-1):
             if (shape[axis] // 2) + 1 != arr.shape[axis]:
                 raise ValueError("Array 'arr' cannot be expanded to demanded shape.")
 
-                # Copy "left" half
+    # Copy "left" half
     output = np.empty(shape, dtype=arr.dtype)
     index = [slice(None)] * arr.ndim
     index[axis] = slice(0, shape[axis] // 2 + 1)
+    index = tuple(index)
     output[index] = arr
 
     # "right" half is conjugated
@@ -117,6 +118,8 @@ def fromHermite(arr, shape, axis=-1):
     iIndex = oIndex[:]
     oIndex[axis] = slice(shape[axis] // 2 + 1, None)
     iIndex[axis] = slice((shape[axis] - 1) // 2, 0, -1)
+    oIndex = tuple(oIndex)
+    iIndex = tuple(iIndex)
     output[oIndex] = np.conj(arr[iIndex])
 
     # Swap halfs on ride side on other directions
