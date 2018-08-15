@@ -46,6 +46,8 @@ following attributes are present in all datasets. This list is incomplete.
 =========================== =================== ================================================================================
 Name                        Type                Description
 =========================== =================== ================================================================================
+holoaverage_version         String              Version number of holoaverage used for averaging.
+holoaverage_param           String              Parameter string passed to holoaverage (JSON).
 align_roi                   List of 4 Ints      Region of object holograms used for raw alignment (see :ref:`param-align_roi`)
 binning                     List of 2 Ints      (X, Y) Detector binning of series
 carrier(nm-1)               List of 2 Floats    Spatial frequency of the reconstructed side band in 1/nm
