@@ -251,14 +251,14 @@ def holoaverage(param, basepath="", verbose=0):
         binning = None
     filter_func = param.get('filter_func', 'edge')
     only_phase = bool(param.get('only_phase', False))
-    enable_raw_align = bool(param.get('enable_raw_align', True))
-    if enable_raw_align and ('align_roi' in param):
+    enable_raw_alignment = bool(param.get('enable_raw_alignment', True))
+    if enable_raw_alignment and ('align_roi' in param):
         align_roi = param['align_roi']
         if align_roi is not None:
             align_roi = np.array(align_roi, dtype=int)
         else:
-            warnings.warn("Setting 'align_roi' to 'null' is deprecated. Set the parameter 'enable_raw_align' to false instead.", DeprecationWarning)
-            enable_raw_align = False
+            warnings.warn("Setting 'align_roi' to 'null' is deprecated. Set the parameter 'enable_raw_alignment' to false instead.", DeprecationWarning)
+            enable_raw_alignment = False
     else:
         align_roi = None
     adjust_defocus = bool(param.get('adjust_defocus', False))
@@ -384,7 +384,7 @@ def holoaverage(param, basepath="", verbose=0):
     data_series.attrs['roi'] = roi
     if align_roi is None:
         align_roi = roi
-    if enable_raw_align and len(data_series) > 1:
+    if enable_raw_alignment and len(data_series) > 1:
         data_series = rawAlign(data_series, qMax=cut_off, roi=align_roi, verbose=verbose)
         data_series.attrs['align_roi'] = align_roi
     data_rois = extractROI(data_series, roi, verbose=verbose)
