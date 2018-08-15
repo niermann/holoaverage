@@ -18,7 +18,6 @@ from __future__ import print_function
 
 import os.path
 import numpy as np
-import json
 import io
 import warnings
 import sys
@@ -30,7 +29,7 @@ from .reconstruction import series_reconstruction, holo_reconstruction
 from .average import holoAverage
 from .rawalign import rawAlign, extractROI
 from .camera import ParameterizedMTF
-from .jsoncleaner import remove_trailing_commas, remove_comments
+from .json_utils import encode_json, decode_json
 from .filter import FilterFunction
 from .version import __version__
 
@@ -60,15 +59,6 @@ def print_version():
     print('but WITHOUT ANY WARRANTY; without even the implied warranty of')
     print('MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the')
     print('GNU General Public License for more details.')
-
-
-def parse_parameters(param):
-    # Remove comments and trailing commas
-    param = remove_comments(param)
-    param = remove_trailing_commas(param)
-
-    # Load as JSON
-    return json.loads(param)
 
 
 def load_file(path):
@@ -297,6 +287,17 @@ def holoaverage(param, basepath="", verbose=0):
     # Adjust filter
     mask_type = FilterFunction(max_q=cut_off, mask_type=filter_func)
 
+    # Object names
+    if object_names is not None:
+        object_index = [index for index in range(object_first, object_last + 1) if index not in object_exclude]
+        object_files = expand_file_names(object_names, object_first, object_last, object_exclude, "object_names")
+
+    # Parameter string
+    param_string = encode_json(param, return_bytes=True)
+    version_string = __version__
+    if not isinstance(version_string, bytes):
+        version_string = version_string.encode("ascii")
+
     # Reconstruct empty wave
     if synthesize_empty:
         # Create synthetic empty
@@ -312,8 +313,6 @@ def holoaverage(param, basepath="", verbose=0):
             # Get sampling from first object file
             if object_names is None:
                 raise ValueError("Either parameter 'sampling' or parameter 'object_names' is needed.")
-            object_index = [index for index in range(object_first, object_last + 1) if index not in object_exclude]
-            object_files = [os.path.join(path, object_names % index) for index in object_index]
             empty_sampling = np.empty(2, dtype=float)
             empty_sampling[...] = load_file(object_files[0]).attrs["dim_scale"]
         else:
@@ -352,6 +351,8 @@ def holoaverage(param, basepath="", verbose=0):
             empty = empty_holo[0]
 
         if output_name:
+            empty.attrs["holoaverage_param"] = param_string
+            empty.attrs["holoaverage_version"] = version_string
             saveHDF5(output_name, empty, dataName=output_prefix + "empty")
     else:
         if empty_size is None:
@@ -365,8 +366,6 @@ def holoaverage(param, basepath="", verbose=0):
         return
 
     # Align object wave
-    object_index = [index for index in range(object_first, object_last + 1) if index not in object_exclude]
-    object_files = expand_file_names(object_names, object_first, object_last, object_exclude, "object_names")
     data_series = LazyLoadingSeries.fromFiles(object_files, load_file, verbose=verbose)
     if sampling is not None:
         data_series.attrs['dim_scale'] = np.ones(2, dtype=float) * sampling
@@ -447,8 +446,12 @@ def holoaverage(param, basepath="", verbose=0):
         out = propagate(holo_series[0], defocus[0])
         var = None
     if output_name:
+        out.attrs["holoaverage_param"] = param_string
+        out.attrs["holoaverage_version"] = version_string
         saveHDF5(output_name, out, dataName=output_prefix + "data")
     if output_name and (var is not None):
+        var.attrs["holoaverage_param"] = param_string
+        var.attrs["holoaverage_version"] = version_string
         saveHDF5(output_name, var, dataName=output_prefix + "variance")
 
 
@@ -500,16 +503,16 @@ def main(argv=None):
     if param_file == '-':
         if verbose > 0:
             print("Loading parameters from stdin")
-        param = sys.stdin.read()
+        param_string = sys.stdin.read()
         basepath = os.path.abspath(os.getcwd())
     else:
         param_file = os.path.abspath(param_file)
         if verbose > 0:
             print("Loading parameters from\n\t%s" % param_file)
         with io.open(param_file, "rt", encoding="utf-8") as file:
-            param = file.read()
+            param_string = file.read()
         basepath = os.path.dirname(param_file)
-    param = parse_parameters(param)
+    param = decode_json(param_string)
 
     # Reconstruct
     holoaverage(param, basepath, verbose=verbose)
