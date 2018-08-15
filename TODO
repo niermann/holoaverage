@@ -4,3 +4,5 @@ List of featured which should be implemented at some time
 * Automatic detection of sideband
 * Weighted average
 * Better error messages
+* ROI for empty hologram
+* averaging currently optimizes inner quarter, make this region selectable
