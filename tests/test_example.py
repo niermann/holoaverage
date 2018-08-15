@@ -23,7 +23,7 @@ class TestExamples(unittest.TestCase):
     GAN_EMPTY_CONVERGENCE_384 = 5.681450e10         # Expected error for 384px empty reconstruction
 
     # Test parameters
-    VERBOSE = 1
+    VERBOSE = 0
     DELETE_OUTPUT = True
 
     def setUp(self):
@@ -247,6 +247,21 @@ class TestExamples(unittest.TestCase):
         self.assertEqual(data.shape, (param["object_size"],) * 2)
         self.assertEqual(empty.shape, (param["empty_size"],) * 2)
 
+    def test_GaN_single_empty_and_object_without_indexing(self):
+        param = self.default_GaN_param()
+        param["object_last"] = 1
+        param["object_names"] = param["object_names"] % 1
+        param["empty_last"] = 1
+        param["empty_names"] = param["empty_names"] % 1
+        holoaverage(param, verbose=self.VERBOSE)
+        with h5py.File(param["output_name"], "r") as output:
+            data = output["data"][...]
+            empty = output["empty"][...]
+
+        # Test for shape
+        self.assertEqual(data.shape, (param["object_size"],) * 2)
+        self.assertEqual(empty.shape, (param["empty_size"],) * 2)
+
     def test_GaN_full_size(self):
         # Reconstruct empty
         param = self.default_GaN_param()
@@ -320,4 +335,3 @@ class TestExamples(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
