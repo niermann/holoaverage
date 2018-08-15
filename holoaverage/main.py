@@ -175,6 +175,27 @@ def create_synthetic_empty(camera_dev, sideband_pos, empty_size, sampling, mask_
     return empty_holo
 
 
+def expand_file_names(pattern, first, last, exclude=[], hint="pattern"):
+    """
+    Expand indexed file names into list
+
+    :param pattern: Pattern used for creation (printf formating)
+    :param first: First index
+    :param last: Last index (inclusive)
+    :param exclude: List of excluded indices
+    :param hint: Hint for error
+    :return:
+    """
+    index_list = [index for index in range(first, last + 1) if index not in exclude]
+    try:
+        file_list = [pattern % index for index in index_list]
+    except:
+        if len(index_list) != 1:
+            raise ValueError("Invalid or missing placeholder in '%s'")
+        file_list = [pattern]
+    return file_list
+
+
 def holoaverage(param, basepath="", verbose=0):
     """
     Reconstruct averaged holograms. See documentation for parameter description.
@@ -307,7 +328,7 @@ def holoaverage(param, basepath="", verbose=0):
             print("Using empty hologram from\n\t%s" % empty_override)
         empty = load_file(empty_override)
     elif empty_names is not None:
-        empty_files = [os.path.join(path, empty_names % index) for index in range(empty_first, empty_last + 1) if index not in empty_exclude]
+        empty_files = expand_file_names(empty_names, empty_first, empty_last, empty_exclude, "empty_names")
         empty_series = LazyLoadingSeries.fromFiles(empty_files, load_file, verbose=verbose)
         if sampling is not None:
             empty_series.attrs['dim_scale'] = sampling
@@ -345,7 +366,7 @@ def holoaverage(param, basepath="", verbose=0):
 
     # Align object wave
     object_index = [index for index in range(object_first, object_last + 1) if index not in object_exclude]
-    object_files = [os.path.join(path, object_names % index) for index in object_index]
+    object_files = expand_file_names(object_names, object_first, object_last, object_exclude, "object_names")
     data_series = LazyLoadingSeries.fromFiles(object_files, load_file, verbose=verbose)
     if sampling is not None:
         data_series.attrs['dim_scale'] = np.ones(2, dtype=float) * sampling
