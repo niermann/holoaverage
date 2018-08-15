@@ -6,7 +6,7 @@
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Foobar is distributed in the hope that it will be useful,
+# holoaverage is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -55,7 +55,7 @@ def print_version():
     print('the Free Software Foundation, either version 3 of the License, or')
     print('(at your option) any later version.')
     print()
-    print('Foobar is distributed in the hope that it will be useful,')
+    print('holoaverage is distributed in the hope that it will be useful,')
     print('but WITHOUT ANY WARRANTY; without even the implied warranty of')
     print('MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the')
     print('GNU General Public License for more details.')
