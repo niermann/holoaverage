@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # This file is part of holoaverage.
 # Copyright (c) 2018 Tore Niermann
 #
@@ -14,11 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with holoaverage.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import print_function
-
 import sys
+import os.path
 
-from .main import main
+# Insert this package directory into PYTHONPATH
+# Clumsy but we assume if the user runs explicitly this package, he want to import from here and not from
+# some other path (see also https://stackoverflow.com/questions/16981921/relative-imports-in-python-3)
+PACKAGE_PARENT = '..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+sys.path.insert(0, os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+
+from holoaverage.main import main
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
