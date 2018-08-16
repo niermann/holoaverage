@@ -38,15 +38,16 @@ def calcWaveLength(voltage_kV):
     return PLANCK_CONSTANT_eVs * SPEED_OF_LIGHT_m_s * 1e+6 / sqrt(voltage_kV * (2.0 * ELECTRON_MASS_keV + voltage_kV))
 
 
-def propagate(data, distance):
+def propagate(data, distance, voltage):
     """
     Propagates wave by distance.
 
     :param data: DataSet to propagate
     :param distance: Distance to propagate in nm
+    :param voltage: Acceleration voltage in kV. If not given taken from data
     """
     grid = Grid.fromDataSet(data)
-    waveLength = calcWaveLength(data.attrs["voltage(kV)"])
+    waveLength = calcWaveLength(voltage)
     qy, qx = grid.getRcprGrid()
 
     tmp = grid.forwardFFT(aligned_copy(data.array))

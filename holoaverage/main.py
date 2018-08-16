@@ -443,7 +443,7 @@ def holoaverage(param, basepath="", verbose=0):
     if len(holo_series) > 1:
         out, var = holoAverage(holo_series, defocus=defocus, adjustDefocus=adjust_defocus, adjustShift=adjust_shift, adjustTilt=adjust_tilt, verbose=verbose * 2, variance=True)
     else:
-        out = propagate(holo_series[0], defocus[0])
+        out = propagate(holo_series[0], defocus[0], holo_series.attrs["voltage(kV)"])
         var = None
     if output_name:
         out.attrs["holoaverage_param"] = param_string
