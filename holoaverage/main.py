@@ -22,6 +22,7 @@ import io
 import warnings
 import sys
 
+from .fft import pyfftw_present
 from .defocus import propagate
 from .series import DataSet, LazyLoadingSeries
 from .hdf5 import saveHDF5
@@ -498,6 +499,12 @@ def main(argv=None):
         print()
         print_syntax(argv[0])
         return 2  # Use exit code 2 for Syntax
+
+    # Hint the installation of pyfftw if missing
+    if not pyfftw_present() and verbose > 0:
+        print("------------------------------------------------------------------------------")
+        print("Consider installing pyfftw, it will speed up the reconstruction significantly.")
+        print("------------------------------------------------------------------------------")
 
     # Read param
     if param_file == '-':
