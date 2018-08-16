@@ -1,4 +1,4 @@
-The tests require the example data to be present in the
+The tests in test_example.py require the example data to be present in the
 
     example/GaN_holographic_focal_series
 

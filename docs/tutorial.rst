@@ -425,21 +425,52 @@ The program now should start with the reconstruction and averaging and should ou
 .. code-block:: none
 
     Loading parameters from
-            directory-with-data-files/holoseries-param.json
+            /home/niermann/PycharmProjects/holoaverage/example/holoaverage-a1.json
+    Loading...
+            20 datasets, shape=(2048, 2048), dtype=int16
+            [00] GaN_holographic_focal_series/empty_001.dm3
+            [01] GaN_holographic_focal_series/empty_002.dm3
+            [02] GaN_holographic_focal_series/empty_003.dm3
+            [03] GaN_holographic_focal_series/empty_004.dm3
+            [04] GaN_holographic_focal_series/empty_005.dm3
+            [05] GaN_holographic_focal_series/empty_006.dm3
+            [06] GaN_holographic_focal_series/empty_007.dm3
+            [07] GaN_holographic_focal_series/empty_008.dm3
+            [08] GaN_holographic_focal_series/empty_009.dm3
+            [09] GaN_holographic_focal_series/empty_010.dm3
+            [10] GaN_holographic_focal_series/empty_011.dm3
+            [11] GaN_holographic_focal_series/empty_012.dm3
+            [12] GaN_holographic_focal_series/empty_013.dm3
+            [13] GaN_holographic_focal_series/empty_014.dm3
+            [14] GaN_holographic_focal_series/empty_015.dm3
+            [15] GaN_holographic_focal_series/empty_016.dm3
+            [16] GaN_holographic_focal_series/empty_017.dm3
+            [17] GaN_holographic_focal_series/empty_018.dm3
+            [18] GaN_holographic_focal_series/empty_019.dm3
+            [19] GaN_holographic_focal_series/empty_020.dm3
     Reconstructing...
             . . . . . . . . . . . . . . . . . . . .
     Optimizing after iteration 0
             [NN] sx[px] sy[px] tx[1/px] ty[1/px] def[nm] Ampl   Phase  Error
             [00]  0.000  0.000  0.00000  0.00000   0.000 1.0000 +0.802 2.403186e+09
-            [01]  0.000  0.000  0.00000  0.00000   0.000 1.0000 -0.672 2.365461e+09
-            [02]  0.000  0.000  0.00000  0.00000   0.000 1.0000 -1.478 2.599820e+09
+            [01]  0.000  0.000  0.00000  0.00000   0.000 1.0000 -0.672 2.365460e+09
+            [02]  0.000  0.000  0.00000  0.00000   0.000 1.0000 -1.478 2.599819e+09
+            [03]  0.000  0.000  0.00000  0.00000   0.000 1.0000 -2.849 2.534287e+09
+            [04]  0.000  0.000  0.00000  0.00000   0.000 1.0000 -1.102 2.451658e+09
+            [05]  0.000  0.000  0.00000  0.00000   0.000 1.0000 +0.163 2.365165e+09
+            [06]  0.000  0.000  0.00000  0.00000   0.000 1.0000 +0.439 2.400905e+09
+            [07]  0.000  0.000  0.00000  0.00000   0.000 1.0000 -0.745 2.470458e+09
+            [08]  0.000  0.000  0.00000  0.00000   0.000 1.0000 +0.303 2.364581e+09
+            [09]  0.000  0.000  0.00000  0.00000   0.000 1.0000 +1.830 2.513006e+09
+            [10]  0.000  0.000  0.00000  0.00000   0.000 1.0000 +1.208 2.377789e+09
+            [11]  0.000  0.000  0.00000  0.00000   0.000 1.0000 -0.781 2.302518e+09
     ...
 
 and so on. Eventually it should output something like:
 
 .. code-block:: none
 
-        Iteration   7: total error=7.502063e+07
+        Iteration   7: total error=7.501946e+07
 
 This error number should go down and converge to a stable value within the last iterations.
 

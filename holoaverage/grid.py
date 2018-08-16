@@ -177,13 +177,14 @@ class Grid(object):
     # Private members
     #   _realSampling    np.ndarray[ndim,ndim]: Real space sampling in for 2D: ((YY,YX),(XY,XX)) in nm
     #   _rcprSampling    np.ndarray[ndim,ndim]: Reciprocal space sampling in 2D: ((YY,YX),(XY,XX)) in 1/nm
+    #   _realOffset      np.ndarray[ndim]: Real space offset in nm
     #   _shape           tuple: Size of simulation grid, len=ndim
     #   _complexType     np.dtype: Complex type
     #   _floatType       np.dtype: Float type
     #   _planFFT         FFT plan (destroys input)
     #   _planIFFT        IFFT plan (destroys input)
     #   _fft_nthreads    Number of threads to use in FFT plans
-    def __init__(self, shape, realSampling=None, rcprSampling=None, dtype=np.complex64):
+    def __init__(self, shape, realSampling=None, rcprSampling=None, realOffset=None, dtype=np.complex64):
         """
         Initializes grid. Either realSampling or rcprSampling must be given.
 
@@ -198,7 +199,9 @@ class Grid(object):
                 Float: Isotropic sampling in 1/nm
                 1D-array: Diagonal sampling in 1/nm
                 2D-array: Anisotropic sampling 1/nm
-            dtype
+            _realOffset:
+                2D-array: Offset 1/nm
+            d type
                 np.dtype: Data type to use
         """
         self._shape = tuple(shape)
@@ -219,6 +222,9 @@ class Grid(object):
             self._setRcprSampling(rcprSampling)
         else:
             raise ValueError("Either 'realSampling' or 'rcprSampling' must be given.")
+        self._realOffset = np.zeros(2, dtype=float)
+        if realOffset is not None:
+            self._realOffset[...] = realOffset
         self._planFFT = None
         self._planIFFT = None
         self._planRFFT = None
@@ -229,7 +235,8 @@ class Grid(object):
                 'complexType': self._complexType,
                 'floatType': self._floatType,
                 'realSampling': self._realSampling,
-                'rcprSampling': self._rcprSampling}
+                'rcprSampling': self._rcprSampling,
+                'realOffset': self._realOffset}
 
     def __setstate__(self, state):
         self._shape = state["shape"]
@@ -237,6 +244,7 @@ class Grid(object):
         self._floatType = state["floatType"]
         self._realSampling = state["realSampling"]
         self._rcprSampling = state["rcprSampling"]
+        self._realOffset = state["realOffset"]
         self._planFFT = None
         self._planIFFT = None
         self._planRFFT = None
@@ -262,7 +270,7 @@ class Grid(object):
             dim_unit = None
         dim_scale = ScaleMatrix(len(dataset.shape))
         if 'dim_scale' in dataset.attrs:
-            dim_scale.set(dataset.attrs['dim_scale']).getMatrix()
+            dim_scale.setReverse(dataset.attrs['dim_scale']).getMatrix()
         else:
             dim_scale.set(np.ones(len(dataset.shape)))
 
@@ -281,7 +289,12 @@ class Grid(object):
                     warnings.warn("Expected unit to be '1/nm' not '%s'" % dim_unit[0])
 
         if space >= 0:
-            return Grid(shape, realSampling=dim_scale, dtype=dtype)
+            if 'dim_offset' in dataset.attrs:
+                dim_offset = np.zeros(2, dtype=float)
+                dim_offset[...] = dataset.attrs["dim_offset"][::-1]
+            else:
+                dim_offset = None
+            return Grid(shape, realSampling=dim_scale, realOffset=dim_offset, dtype=dtype)
         else:
             dim_scale.set(dim_scale.getMatrix() * np.atleast_1d(shape))
             return Grid(shape, rcprSampling=dim_scale, dtype=dtype)
@@ -313,6 +326,10 @@ class Grid(object):
     def _setRcprSampling(self, value):
         self._rcprSampling.set(value)
         self._realSampling.set(np.linalg.inv(self._rcprSampling.getMatrix()))
+
+    @property
+    def realOffset(self):
+        return self._realOffset.copy()
 
     def hasDiagonalSampling(self):
         """Returns whether the sampling matrix is diagonal (sampling along grid axes)."""
@@ -483,9 +500,11 @@ class Grid(object):
             Td = np.diag(T)
             for i in range(ndim):
                 result[i] *= Td[i]
+                result[i] += self._realOffset[i]
         else:
             result = np.zeros((ndim,) + self._shape, dtype=self.floatType)
             for i in range(ndim):
                 for j in range(ndim):
-                    result[i] = result[i] + T[i, j] * idx[j]
+                    result[i] += T[i, j] * idx[j]
+                result[i] += self._realOffset[i]
         return result

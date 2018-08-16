@@ -101,7 +101,7 @@ def rawAlign(series, qMax=None, verbose=0, roi=None, filter=None):
     return series
 
 
-def extractROI(series, roi, binning=1, verbose=0, dtype=None):
+def extractROI(series, roi, verbose=0, dtype=None):
     """
     Extracts ROI from a series the result as a new series.
 
@@ -112,17 +112,12 @@ def extractROI(series, roi, binning=1, verbose=0, dtype=None):
             The series to be reconstructed
         roi
             Region of interest in [px] (left, top, right, bottom)
-        binning
-            Binning (X,Y) to use
         dtype
             Type of ROI series, defaults to series type
     """
     if len(series.shape) != 2:
         raise ValueError("2D series expected.")
     shape = (roi[3] - roi[1], roi[2] - roi[0])
-    binning = np.diag(ScaleMatrix(2).set(binning).getMatrix()).astype(int)
-    if (shape[0] % binning[1]) != 0 or (shape[1] % binning[0]) != 0:
-        raise ValueError("ROI shape must be a multiple of binning.")
     if dtype is None:
         dtype = series.dtype
     raw_shift = series.attrs.get("raw_shift", np.zeros(series.indexShape + (2,), dtype=int))
@@ -131,14 +126,11 @@ def extractROI(series, roi, binning=1, verbose=0, dtype=None):
     dim_offset = series.attrs.get('dim_offset', np.zeros(2, dtype=float))
     if dim_scale.get() is not None:
         dim_offset = np.dot(dim_scale.getMatrix(), roi[0:2]) + dim_offset
-        dim_scale.set(dim_scale.getMatrix() * binning.astype(float))
-    old_binning = np.diag(ScaleMatrix(2).set(series.attrs.get('binning', 1)).getMatrix())
     overrides = {"dim_scale": dim_scale.getCompact(minRank=1),
-                 "dim_offset": dim_offset,
-                 "binning": old_binning * binning}
+                 "dim_offset": dim_offset}
 
     # Extracting
-    result = Series(series.indexShape, (shape[0] / binning[1], shape[1] / binning[0]), dtype=dtype)
+    result = Series(series.indexShape, shape, dtype=dtype)
     result.attrs.update(series.attrs)
     result.attrs.update(overrides)
     result.attrs['roi'] = roi
@@ -170,13 +162,11 @@ def extractROI(series, roi, binning=1, verbose=0, dtype=None):
         tmp[...] = np.mean(series[index].array)
         tmp[dy:dy + ny, dx:dx + nx] = series[index].array[sy:sy + ny, sx:sx + nx]
         data = DataSet(result.shape, dtype=dtype)
-        data.array[...] = 0
-        for i in range(binning[1]):
-            for j in range(binning[0]):
-                data.array[...] += tmp[i::binning[1], j::binning[0]]
+        data.array[...] = tmp
         data.attrs.update(series[index].attrs)
         data.attrs.update(overrides)
         data.attrs['roi'] = (_x + roi[0], _y + roi[1], _x + roi[2], _y + roi[3])
+        data.attrs['dim_offset'] = np.dot(dim_scale.getMatrix(), data.attrs['roi'][0:2]) + dim_offset
         result[index] = data
     if verbose > 0:
         print()

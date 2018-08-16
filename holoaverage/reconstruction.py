@@ -75,12 +75,13 @@ class HoloReconstructor(object):
         src_scale = grid.realSampling
         # Test for pixels out of desired region
         carrier_px = np.dot(src_scale, np.array((carrier[1], carrier[0]), dtype=float)) * np.array(self._grid.shape, dtype=float)
+        icarrier_px = np.floor(carrier_px).astype(int)
         ry, rx = self._grid.shape[0] // 2, self._grid.shape[1] // 2
         ny, nx = shape
         hy, hx = ny // 2, nx // 2
         dy, dx = 0, 0
-        sy = ry + int(carrier_px[0]) - hy
-        sx = rx + int(carrier_px[1]) - hx
+        sy = ry + icarrier_px[0] - hy
+        sx = rx + icarrier_px[1] - hx
         # print sx, sy, rx, ry, carrier_px, hx, hy
         if sy < 0:
             ny += sy
@@ -117,6 +118,7 @@ class HoloReconstructor(object):
         # Prepare FFT
         self._reco_grid = Grid(shape, realSampling=self._destScale, dtype=self._grid.complexType)
         self._reco_grid.prepareFFT(forwardFFT=False, backwardFFT=True, forwardRFFT=False, backwardRFFT=False)
+        self._reco_phase_wedge = np.dot(np.linalg.inv(src_scale), (carrier_px - icarrier_px) / np.array(self._grid.shape, dtype=float))
 
     def apply(self, data):
         if (data.shape != self._grid.shape):
@@ -128,12 +130,19 @@ class HoloReconstructor(object):
             tmp = np.fft.fftshift(fromHermite(self._grid.forwardRFFT(sub), sub.shape))
         else:
             tmp = sub
+
         # Extract and iFFT
         dx0, dy0, dx1, dy1 = self._destRect
         sx0, sy0, sx1, sy1 = self._srcRect
         side[dy0:dy1, dx0:dx1] = tmp[sy0:sy1, sx0:sx1] * self._mask
         result = DataSet(self._destShape, dtype=self._grid.complexType)
         result.array[...] = self._reco_grid.backwardFFT(np.fft.ifftshift(side))
+
+        # Correct for non-pixel aligned carrier
+        if not np.allclose(self._reco_phase_wedge, 0.0):
+            ry, rx = self._reco_grid.getRealGrid()
+            result.array[...] *= np.exp(-2.0j * np.pi * self._reco_phase_wedge[0] * ry) * np.exp(-2.0j * np.pi * self._reco_phase_wedge[1] * rx)
+
         result.attrs.update(data.attrs)
         result.attrs.update(self._reco_attrs)
         return result

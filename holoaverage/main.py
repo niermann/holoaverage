@@ -140,9 +140,9 @@ def rescale_fourier(data, shape=None, out=None):
     elif out.shape != shape:
         raise ValueError("Output array shape must fit given shape.")
     out.fill(0)
-    out[shape[0] // 2 - half[0]:shape[0] // 2 + half[0], shape[1] // 2 - half[1]:shape[1] // 2 + half[1]] = \
-        np.fft.fftshift(np.fft.fft2(data))[data.shape[0] // 2 - half[0]:data.shape[0] // 2 + half[0],
-                                           data.shape[1] // 2 - half[1]:data.shape[1] // 2 + half[1]]
+    out[shape[0] // 2 - half[0]:shape[0] // 2 + half[0] + 1, shape[1] // 2 - half[1]:shape[1] // 2 + half[1] + 1] = \
+        np.fft.fftshift(np.fft.fft2(data))[data.shape[0] // 2 - half[0]:data.shape[0] // 2 + half[0] + 1,
+                                           data.shape[1] // 2 - half[1]:data.shape[1] // 2 + half[1] + 1]
     out[...] = np.fft.ifft2(np.fft.ifftshift(out))
     return out
 
