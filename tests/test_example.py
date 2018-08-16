@@ -4,6 +4,10 @@ import tempfile
 import h5py
 import numpy as np
 
+import warnings
+warnings.filterwarnings("error",category=DeprecationWarning)
+warnings.filterwarnings("error",category=PendingDeprecationWarning)
+
 from holoaverage.main import holoaverage, rescale_fourier
 
 # Setup path to example data
@@ -18,9 +22,9 @@ EXAMPLE_MTF = [["CONSTANT", -2.25536738e-02],
 class TestExamples(unittest.TestCase):
     """Test whether the examples run."""
 
-    GAN_DATA_CONVERGENCE_256 = 1.337721e8           # Expected error for 256px object reconstruction
-    GAN_DATA_CONVERGENCE_256_FOCUS = 1.249292e8     # Expected error for 256px object reconstruction with defocus adjustment
-    GAN_EMPTY_CONVERGENCE_384 = 5.681450e10         # Expected error for 384px empty reconstruction
+    GAN_DATA_CONVERGENCE_256 = 58546370.75          # Expected error for 256px object reconstruction
+    GAN_DATA_CONVERGENCE_256_FOCUS = 5.467907e+07   # Expected error for 256px object reconstruction with defocus adjustment
+    GAN_EMPTY_CONVERGENCE_384 = 3.20882540e+10      # Expected error for 384px empty reconstruction
 
     # Test parameters
     VERBOSE = 0
@@ -48,11 +52,11 @@ class TestExamples(unittest.TestCase):
             "object_names": os.path.join(EXAMPLE_PATH, "a1_%03d.dm3"),
             "object_first": 1,
             "object_last": 20,
-            "object_size": 256,
+            "object_size": 384,
             "empty_names": os.path.join(EXAMPLE_PATH, "empty_%03d.dm3"),
             "empty_first": 1,
             "empty_last": 20,
-            "empty_size": 384,
+            "empty_size": 512,
             "sampling": 0.00519824,
             "defocus_first": 20.0,
             "defocus_step": -2.0,
@@ -92,12 +96,12 @@ class TestExamples(unittest.TestCase):
             empty_convergence = output["empty"].attrs["convergence"]
 
         # Test for empty convergence
-        self.assertTrue(np.allclose(empty_convergence[-1], self.GAN_EMPTY_CONVERGENCE_384 * (384.0/512.0)**2, rtol=0.1))
+        self.assertTrue(np.allclose(empty_convergence[-1], self.GAN_EMPTY_CONVERGENCE_384, rtol=0.1))
         delta = (empty_convergence[1:] - empty_convergence[:-1]) / empty_convergence[:-1]
         self.assertTrue(np.all(delta < +1e-4))
 
         # Test for data convergence
-        self.assertTrue(np.allclose(data_convergence[-1], self.GAN_DATA_CONVERGENCE_256 * (256.0/384.0)**2, rtol=0.1))
+        self.assertTrue(np.allclose(data_convergence[-1], self.GAN_DATA_CONVERGENCE_256, rtol=0.1))
         delta = (data_convergence[1:] - data_convergence[:-1]) / data_convergence[:-1]
         self.assertTrue(np.all(delta < +1e-4))
 
@@ -119,7 +123,7 @@ class TestExamples(unittest.TestCase):
         self.assertTrue(np.all(delta < +1e-4))
 
         # Test for data convergence
-        self.assertTrue(np.allclose(data_convergence[-1], 1.337719e8, rtol=1e-4))
+        self.assertTrue(np.allclose(data_convergence[-1], self.GAN_DATA_CONVERGENCE_256, rtol=1e-4))
         delta = (data_convergence[1:] - data_convergence[:-1]) / data_convergence[:-1]
         self.assertTrue(np.all(delta < +1e-4))
 
@@ -184,7 +188,7 @@ class TestExamples(unittest.TestCase):
             data_convergence = output["data"].attrs["convergence"]
 
         # Test for data convergence
-        self.assertTrue(np.allclose(data_convergence[-1], 5.6592e14, rtol=1e-4))
+        self.assertTrue(np.allclose(data_convergence[-1], 4.88520723e+13, rtol=1e-4))
         delta = (data_convergence[1:] - data_convergence[:-1]) / data_convergence[:-1]
         self.assertTrue(np.all(delta < +1e-4))
 
@@ -203,7 +207,7 @@ class TestExamples(unittest.TestCase):
             data_convergence = output["data"].attrs["convergence"]
 
         # Test for data convergence
-        self.assertTrue(np.allclose(data_convergence[-1], 5.6592e14, rtol=1e-4))
+        self.assertTrue(np.allclose(data_convergence[-1], 2.47313565e+14, rtol=1e-4))
         delta = (data_convergence[1:] - data_convergence[:-1]) / data_convergence[:-1]
         self.assertTrue(np.all(delta < +1e-4))
 
@@ -310,7 +314,7 @@ class TestExamples(unittest.TestCase):
         np.testing.assert_allclose(np.angle(empty / new_empty)[10:-10, 10:-10], 0.0, atol=0.1)
 
         # Test for data convergence
-        self.assertTrue(np.allclose(data_convergence[-1], 5.1516e+11, rtol=1e-4))
+        self.assertTrue(np.allclose(data_convergence[-1], 2.25341306e+11, rtol=1e-4))
         delta = (data_convergence[1:] - data_convergence[:-1]) / data_convergence[:-1]
         self.assertTrue(np.all(delta < +1e-4))
 
