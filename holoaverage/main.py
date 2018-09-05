@@ -101,8 +101,8 @@ def load_file(path):
     elif type == "hdf5" or type == "h5":
         if "dataset" in param:
             dataset = param["dataset"]
-        elif (len(parts) == 2) and not ("=" in parts[1]):
-            dataset = parts[1]
+        elif (len(parts) == 1) and not ("=" in parts[0]):
+            dataset = parts[0]
             warnings.warn("Passing the dataset name after question mark for HDF5 files is deprecated.", DeprecationWarning)
         else:
             raise ValueError("Parameter 'dataset' missing for HDF5 file: %s" % path)
