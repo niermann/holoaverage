@@ -234,7 +234,18 @@ def holoaverage(param, basepath="", verbose=0):
         roi = np.array(param['roi'], dtype=int)
     else:
         roi = None
-    cut_off = float(param['cut_off'])
+
+    if 'cut_off' in param:
+        if 'cut_off2' in param:
+            raise ValueError("Either parameter 'cut_off' or parameter 'cut_off2' must be set, not both.")
+        cut_off = float(param['cut_off'])
+        cut_off2 = np.eye(2) * cut_off
+    elif 'cut_off2' in param:
+        cut_off2 = np.empty((2, 2), dtype=float)
+        cut_off2[...] = param['cut_off2']
+        cut_off = np.sqrt(np.linalg.det(cut_off2))
+    else:
+        raise ValueError("Either parameter 'cut_off' or parameter 'cut_off2' must be set, not none.")
 
     # Get optional parameters
     path = os.path.abspath(os.path.join(basepath, param.get('path', '')))
@@ -286,7 +297,7 @@ def holoaverage(param, basepath="", verbose=0):
     distortions = param.get('camera_distortions')
 
     # Adjust filter
-    mask_type = FilterFunction(max_q=cut_off, mask_type=filter_func)
+    mask_type = FilterFunction(max_q2=cut_off2, mask_type=filter_func)
 
     # Object names
     if object_names is not None:

@@ -195,6 +195,39 @@ cut_off
     step. For the raw alignment low pass, always a hard aperture (edge function) is taken.
     Please note, that if a wrong :ref:`param-sampling` is specified, the value of this parameter does not refer to the
     correct spatial frequency.
+    Instead of this parameter the parameter :ref:`param-cut_off2` can be specified.
+
+.. _param-cut_off2:
+
+cut_off2
+^^^^^^^^
+
+:Parameter: ``cut_off2``
+:Type: Alternative to (:ref:`param-cut_off`)
+:Format: 2x2 matrix of floating point numbers (list of two lists of two floats)
+:Unit: Reciprocal nanometer squared (1/nm2)
+:Description:
+    This parameter extents the functionality of the parameter :ref:`param-cut_off` for non-isotropic masking.
+    For a general description of the overall parameter see :ref:`param-cut_off`. For a masking with radius `a` along
+    the major axis with an angle of `alpha` to the x-axis and a radius of `b` along the minor axis, specify
+
+    .. math::
+        \begin{multline}
+        R = \left[ \begin{array}{cc}
+        \cos(\alpha) & \sin(\alpha) \\
+        -\sin(\alpha) & \cos(\alpha) \\
+        \end{array}\right] \\
+        \mathrm{cut\_off2} = R^T \cdot \left[ \begin{array}{cc}
+        a^2 & 0 \\
+        0 & b^2 \\
+        \end{array}\right] \cdot R
+        \end{multline}
+
+    If this parameter is specified, the parameter :ref:`param-cut_off` must not be present.
+
+    Raw alignment still uses isotropic filtering with the geometric mean of both radii as radius.
+
+    .. versionadded:: 1.1.4
 
 .. _param-defocus_first:
 
