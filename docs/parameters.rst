@@ -24,7 +24,7 @@ File pathes / File formats
 
 Some parameters are file pathes. All file pathes are relative to the directory, where the parameter file
 is located. If the parameters are read from *stdin*, the pathes are relative to the current directory. This behavior
-can be changed by setting the :ref:`param-path` parameter.
+can be changed by setting the :ref:`param-path` parameter (see description of parameter for details).
 
 Within a path forward slashes (``/``) as well as backslashes (``\\``) both are treated as path separators.
 Internally all pathes are normalized to the platform's separator (e.g. backslashes on Windows platforms).
@@ -528,7 +528,8 @@ path
 :Parameter: ``path``
 :Type: Optional (default is none)
 :Format: String
-:Description: Path to prefix to all file names. If this is not an absolute path, the path is taken relative to the path
+:Description: All (relative) file names are relative to this path. Absolute file names are still absolute.
+    If this parameter itself is not an absolute path, the path is taken relative to the path
     of the parameter file (current directory, if the parameters are read from *stdin*). By default this path is left
     empty, which means all file names are relative to the parameter file path (or the current directory, when the
     parameters are read from *stdin*; see :ref:`sec-file_pathes`).
