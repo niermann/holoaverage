@@ -187,6 +187,17 @@ def expand_file_names(pattern, first, last, exclude=[], hint="pattern"):
     return file_list
 
 
+def join_path_list(path_list, prefix):
+    """
+    Prepends list of pathes 'path_list' with 'prefix' path, using the 'os.path.join' function
+
+    :param path_list: list of str
+    :param prefix: str
+    :return: list of joined pathes
+    """
+    return [os.path.join(prefix, path) for path in path_list]
+
+
 def holoaverage(param, basepath="", verbose=0):
     """
     Reconstruct averaged holograms. See documentation for parameter description.
@@ -248,7 +259,7 @@ def holoaverage(param, basepath="", verbose=0):
         raise ValueError("Either parameter 'cut_off' or parameter 'cut_off2' must be set, not none.")
 
     # Get optional parameters
-    path = os.path.abspath(os.path.join(basepath, param.get('path', '')))
+    prefix_path = os.path.abspath(os.path.join(basepath, param.get('path', '')))
     if 'sampling' in param:
         sampling = np.ones(2, dtype=float) * param['sampling']
     else:
@@ -280,9 +291,9 @@ def holoaverage(param, basepath="", verbose=0):
     output_aligned = bool(param.get('output_aligned', False))
     if ('output_name' not in param) and ('output' in param):
         warnings.warn("The parameter 'output' is deprecated. Use 'output_name' instead.", DeprecationWarning)
-        output_name = os.path.join(path, str(param['output']))
+        output_name = os.path.join(prefix_path, str(param['output']))
     elif 'output_name' in param:
-        output_name = os.path.join(path, str(param['output_name']))
+        output_name = os.path.join(prefix_path, str(param['output_name']))
     else:
         output_name = None
     output_prefix = str(param.get('output_prefix', ''))
@@ -303,6 +314,7 @@ def holoaverage(param, basepath="", verbose=0):
     if object_names is not None:
         object_index = [index for index in range(object_first, object_last + 1) if index not in object_exclude]
         object_files = expand_file_names(object_names, object_first, object_last, object_exclude, "object_names")
+        object_files = join_path_list(object_files, prefix_path)
 
     # Parameter string
     param_string = encode_json(param, return_bytes=True)
@@ -313,10 +325,10 @@ def holoaverage(param, basepath="", verbose=0):
     # Reconstruct empty wave
     if synthesize_empty:
         # Create synthetic empty
-        camera_dev_names = [os.path.join(path, name) for name in distortions]
+        camera_dev_names = [os.path.join(prefix_path, name) for name in distortions]
         camera_dev = [load_file(name).array for name in camera_dev_names]
         if verbose > 0:
-            print("Synthesizing empty hologram from\n\t%s\n\t%s" % (camera_dev_names[0], camera_dev_names[1]))
+            print("Synthesizing empty hologram from\n\t%s\n\t%s" % (os.path.basename(camera_dev_names[0]), os.path.basename(camera_dev_names[1])))
         if empty_size is None:
             if object_size is None:
                 raise ValueError("Either parameter 'empty_size' or parameter 'object_size' are needed.")
@@ -334,12 +346,13 @@ def holoaverage(param, basepath="", verbose=0):
         if output_name:
             saveHDF5(output_name, empty, dataName=output_prefix + "empty")
     elif empty_override is not None:
-        empty_override = os.path.join(path, empty_override)
+        empty_override = os.path.join(prefix_path, empty_override)
         if verbose > 0:
-            print("Using empty hologram from\n\t%s" % empty_override)
+            print("Using empty hologram from\n\t%s" % os.path.basename(empty_override))
         empty = load_file(empty_override)
     elif empty_names is not None:
         empty_files = expand_file_names(empty_names, empty_first, empty_last, empty_exclude, "empty_names")
+        empty_files = join_path_list(empty_files, prefix_path)
         empty_series = LazyLoadingSeries.fromFiles(empty_files, load_file, verbose=verbose)
         if sampling is not None:
             empty_series.attrs['dim_scale'] = sampling
@@ -526,7 +539,7 @@ def main(argv=None):
     else:
         param_file = os.path.abspath(param_file)
         if verbose > 0:
-            print("Loading parameters from\n\t%s" % param_file)
+            print("Loading parameters from\n\t%s" % os.path.basename(param_file))
         with io.open(param_file, "rt", encoding="utf-8") as file:
             param_string = file.read()
         basepath = os.path.dirname(param_file)

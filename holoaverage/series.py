@@ -16,6 +16,7 @@
 
 from __future__ import print_function
 import numpy as np
+import os.path
 
 from .grid import Grid
 from .fft import empty_aligned
@@ -411,7 +412,7 @@ class Series(AbstractSeries):
         if verbose > 0:
             print("Loading...")
             print("\t%d datasets, shape=%s, dtype=%s" % (len(listOfNames), first.shape, first.dtype))
-            print("\t[%02d] %s" % (0, listOfNames[0]))
+            print("\t[%02d] %s" % (0, os.path.basename(listOfNames[0])))
         result = Series(len(listOfNames), first.shape, first.dtype)
         result[0] = first
         # Get known attributes
@@ -424,7 +425,7 @@ class Series(AbstractSeries):
         # Get others
         for i in range(1, len(listOfNames)):
             if verbose > 0:
-                print("\t[%02d] %s" % (i, listOfNames[i]))
+                print("\t[%02d] %s" % (i, os.path.basename(listOfNames[i])))
             result[i] = loader(listOfNames[i])
         return result
 
@@ -518,7 +519,8 @@ class LazyLoadingSeries(AbstractSeries):
 
     @staticmethod
     def fromFiles(listOfNames, loader, verbose=0):
-        """Creates a series from a number of files.
+        """
+        Creates a series from a number of files.
 
         Arguments
             listOfNames
@@ -531,7 +533,7 @@ class LazyLoadingSeries(AbstractSeries):
         if verbose > 0:
             print("Loading...")
             print("\t%d datasets, shape=%s, dtype=%s" % (len(listOfNames), first.shape, first.dtype))
-            print("\t[%02d] %s" % (0, listOfNames[0]))
+            print("\t[%02d] %s" % (0, os.path.basename(listOfNames[0])))
         result = LazyLoadingSeries(listOfNames, loader, first.shape, first.dtype)
         # Get known attributes
         keys = list(DataSet.general_attributes)
@@ -545,6 +547,6 @@ class LazyLoadingSeries(AbstractSeries):
         # Print other names
         if verbose > 0:
             for i in range(1, len(listOfNames)):
-                print("\t[%02d] %s" % (i, listOfNames[i]))
+                print("\t[%02d] %s" % (i, os.path.basename(listOfNames[i])))
         return result
 
