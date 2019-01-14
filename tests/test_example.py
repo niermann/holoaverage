@@ -194,7 +194,7 @@ class TestExamples(unittest.TestCase):
 
     def test_GaN_empty_from_raw(self):
         param = self.default_GaN_param()
-        empty_raw = self.touch_temp_output(suffix="dat")
+        empty_raw = self.touch_temp_output(suffix=".dat")
         with open(empty_raw, "wb") as file:
             np.zeros(100000, dtype=np.uint8).tofile(file)
             np.ones(256 * 256, dtype=np.complex64).tofile(file)
