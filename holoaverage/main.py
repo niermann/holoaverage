@@ -239,7 +239,7 @@ def holoaverage(param, basepath="", verbose=0):
         if 'cut_off2' in param:
             raise ValueError("Either parameter 'cut_off' or parameter 'cut_off2' must be set, not both.")
         cut_off = float(param['cut_off'])
-        cut_off2 = np.eye(2) * cut_off
+        cut_off2 = np.eye(2) * (cut_off ** 2)
     elif 'cut_off2' in param:
         cut_off2 = np.empty((2, 2), dtype=float)
         cut_off2[...] = param['cut_off2']
