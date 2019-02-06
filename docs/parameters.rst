@@ -134,6 +134,24 @@ adjust_tilt
     position. Such a drift might occur when the voltage supply of the biprism is not stable. Usually this alignment is
     not needed.
 
+.. _param-align_cut_off:
+
+align_cut_off
+^^^^^^^^^^^^^
+
+:Parameter: ``align_cut_off``
+:Type: Optional (by default value of parameter :ref:`param-cut_off` is taken)
+:Format: Floating point number
+:Unit: Reciprocal nanometer (1/nm)
+:Description: The value specified by this parameter is taken as cut-off frequency for the low pass used in the raw
+    alignment step. For the raw alignment low pass, always a hard aperture (edge function) is taken.
+    Please note, that if a wrong :ref:`param-sampling` is specified, the value of this parameter does not refer to the
+    correct spatial frequency.
+
+    If this parameter is not given, the value of the parameter :ref:`param-cut_off` or :ref:`param-cut_off2` is used.
+
+    .. versionadded:: 1.1.5
+
 .. _param-align_roi:
 
 align_roi
@@ -147,10 +165,6 @@ align_roi
     holograms. This region can be specified independently from the reconstruction region (as given by :ref:`param-roi`).
 
     If this parameter is not given the reconstruction region :ref:`param-roi` is also used for raw alignment.
-
-    .. deprecated:: 1.1
-        Setting this parameter to ``null`` disables the raw alignment. Set the parameter :ref:`param-enable_raw_alignment`
-        to ``false`` instead.
 
 .. _param-binning:
 
@@ -191,8 +205,6 @@ cut_off
     sideband in Fourier space is done. This is typically the radius of the mask used. The smaller this is chosen,
     the lower the resolution of the reconstructions will be. However, smaller values will spatially average the
     reconstructions more, thus decreasing the noise present in the holograms (at the cost of larger spatial correlations).
-    The value specified by this parameter is also taken as cut-off frequency for the low pass used in the raw alignment
-    step. For the raw alignment low pass, always a hard aperture (edge function) is taken.
     Please note, that if a wrong :ref:`param-sampling` is specified, the value of this parameter does not refer to the
     correct spatial frequency.
     Instead of this parameter the parameter :ref:`param-cut_off2` can be specified.

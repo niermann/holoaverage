@@ -58,9 +58,9 @@ Raw alignment and ROI selection
 During the acquisition of the series it may happen that the specimen drifts. These specimen drifts are detected
 in the raw alignment step. The phase correlation function (see [Meyer02]_) of the central band between consecutive images
 of the series is used for the detection of these drifts. For selection of the central band a low-pass filter
-is needed. The *holoaverage* program uses the same cut-off frequency for this low-pass as
-for the holographic reconstruction step as given by the parameter :ref:`param-cut_off`.
-The :ref:`param-cut_off` is given in reciprocal nanometers.
+is needed. The cut-off frequency for this low-pass can be specified by the parameter :ref:`param-align_cut_off`
+(in reciprocal nanometers). If no value is for :ref:`param-align_cut_off` is provided, the same cut off frequency
+as used for the hologram reconstruction is used, as given by parameter :ref:`param-cut_off`.
 
 A region of interest (ROI) from which eventually the holograms are reconstructed can be specified by the :ref:`param-roi`
 parameters. The region of interest is specified by giving the ``left``, ``top``, ``right``, and ``bottom`` pixel coordinates of the
