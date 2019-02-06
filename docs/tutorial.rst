@@ -152,7 +152,6 @@ documentation. Lines beginning with double slashes (i.e. ``//``) are comments an
         "filter_func" : ["BUTTERWORTH", 14],
 
         // cut off frequency in 1/nm (q_max). Required.
-        // Also used as low-pass frequency for raw alignment
         "cut_off" : 14.5,
 
         // Parameterization for MTF
