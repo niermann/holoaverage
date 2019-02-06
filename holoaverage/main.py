@@ -284,6 +284,8 @@ def holoaverage(param, basepath="", verbose=0):
             enable_raw_alignment = False
     else:
         align_roi = None
+    if enable_raw_alignment:
+        align_cut_off = float(param.get('align_cut_off', cut_off))
     adjust_defocus = bool(param.get('adjust_defocus', False))
     adjust_shift = bool(param.get('adjust_shift', True))
     adjust_tilt = bool(param.get('adjust_tilt', False))
@@ -410,7 +412,7 @@ def holoaverage(param, basepath="", verbose=0):
     if align_roi is None:
         align_roi = roi
     if enable_raw_alignment and len(data_series) > 1:
-        data_series = rawAlign(data_series, qMax=cut_off, roi=align_roi, verbose=verbose)
+        data_series = rawAlign(data_series, qMax=align_cut_off, roi=align_roi, verbose=verbose)
         data_series.attrs['align_roi'] = align_roi
     data_rois = extractROI(data_series, roi, verbose=verbose)
     del data_series
