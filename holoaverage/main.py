@@ -414,6 +414,7 @@ def holoaverage(param, basepath="", verbose=0):
     if enable_raw_alignment and len(data_series) > 1:
         data_series = rawAlign(data_series, qMax=align_cut_off, roi=align_roi, verbose=verbose)
         data_series.attrs['align_roi'] = align_roi
+        data_series.attrs['align_cut_off'] = align_cut_off
     data_rois = extractROI(data_series, roi, verbose=verbose)
     del data_series
 
