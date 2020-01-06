@@ -336,6 +336,26 @@ class TestExamples(unittest.TestCase):
         delta = (data_convergence[1:] - data_convergence[:-1]) / data_convergence[:-1]
         self.assertTrue(np.all(delta < +1e-4))
 
+    def test_GaN_filename_list(self):
+        param = self.default_GaN_param()
+        # Use smaller series for speed
+        object_names = param["object_names"]
+        empty_names = param["empty_names"]
+        param["object_names"] = [object_names % n for n in range(1, 12, 2)]
+        param["empty_names"] = [empty_names % n for n in range(1, 12, 2)]
+        holoaverage(param, verbose=self.VERBOSE)
+        with h5py.File(param["output_name"], "r") as output:
+            data_convergence = output["data"].attrs["convergence"]
+            empty_convergence = output["empty"].attrs["convergence"]
+
+        # Test for empty convergence
+        delta = (empty_convergence[1:] - empty_convergence[:-1]) / empty_convergence[:-1]
+        self.assertTrue(np.all(delta < +1e-4))
+
+        # Test for data convergence
+        delta = (data_convergence[1:] - data_convergence[:-1]) / data_convergence[:-1]
+        self.assertTrue(np.all(delta < +1e-4))
+
 
 if __name__ == '__main__':
     unittest.main()
