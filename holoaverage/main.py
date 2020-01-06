@@ -49,7 +49,7 @@ def print_syntax(prog_name):
 
 def print_version():
     print('holoaverage Version %s' % __version__)
-    print('Copyright (c) 2018 Tore Niermann')
+    print('Copyright (c) 2018-2020 Tore Niermann')
     print()
     print('holoaverage is free software: you can redistribute it and/or modify')
     print('it under the terms of the GNU General Public License as published by')
@@ -182,7 +182,7 @@ def expand_file_names(pattern, first, last, exclude=[], hint="pattern"):
         file_list = [pattern % index for index in index_list]
     except:
         if len(index_list) != 1:
-            raise ValueError("Invalid or missing placeholder in '%s'")
+            raise ValueError("Invalid or missing placeholder in '%s'" % hint)
         file_list = [pattern]
     return file_list
 
@@ -211,7 +211,11 @@ def holoaverage(param, basepath="", verbose=0):
     """
     # Get required parameters
     if 'object_names' in param:
-        object_names = str(param['object_names'])
+        object_names = param['object_names']
+        if isinstance(object_names, (list, tuple)):
+            object_names = [str(name) for name in object_names]
+        else:
+            object_names = str(param['object_names'])
         object_first = int(param.get('object_first'))
         object_last = int(param.get('object_last'))
     else:
@@ -229,9 +233,13 @@ def holoaverage(param, basepath="", verbose=0):
         empty_override = str(param['empty_override'])
         empty_names = None
     elif 'empty_names' in param:
-        empty_names = str(param['empty_names'])
-        empty_first = int(param['empty_first'])
-        empty_last = int(param['empty_last'])
+        empty_names = param['empty_names']
+        if isinstance(empty_names, (list, tuple)):
+            empty_names = [str(name) for name in empty_names]
+        else:
+            empty_names = str(empty_names)
+            empty_first = int(param['empty_first'])
+            empty_last = int(param['empty_last'])
         empty_override = None
     else:
         empty_names = None
@@ -314,8 +322,12 @@ def holoaverage(param, basepath="", verbose=0):
 
     # Object names
     if object_names is not None:
-        object_index = [index for index in range(object_first, object_last + 1) if index not in object_exclude]
-        object_files = expand_file_names(object_names, object_first, object_last, object_exclude, "object_names")
+        if isinstance(object_names, (list, tuple)):
+            object_files = object_names
+            object_index = [n for n in range(len(object_files))]
+        else:
+            object_index = [index for index in range(object_first, object_last + 1) if index not in object_exclude]
+            object_files = expand_file_names(object_names, object_first, object_last, object_exclude, "object_names")
         object_files = join_path_list(object_files, prefix_path)
 
     # Parameter string
@@ -353,7 +365,10 @@ def holoaverage(param, basepath="", verbose=0):
             print("Using empty hologram from\n\t%s" % os.path.basename(empty_override))
         empty = load_file(empty_override)
     elif empty_names is not None:
-        empty_files = expand_file_names(empty_names, empty_first, empty_last, empty_exclude, "empty_names")
+        if isinstance(empty_names, (list, tuple)):
+            empty_files = empty_names
+        else:
+            empty_files = expand_file_names(empty_names, empty_first, empty_last, empty_exclude, "empty_names")
         empty_files = join_path_list(empty_files, prefix_path)
         empty_series = LazyLoadingSeries.fromFiles(empty_files, load_file, verbose=verbose)
         if sampling is not None:

@@ -309,14 +309,22 @@ empty_names
 ^^^^^^^^^^^
 
 :Parameter: ``empty_names``
-:Type: Mandatory
-:Format: String
-:Description: File name of empty hologram series. See :ref:`param-object_names` for the description of the format of this
-    parameter.
+:Type: (see Description)
+:Format: String or list of string
+:Description:
+    If this parameter is a list of strings, the list compromises the filenames of the empty hologram series.
+    In this case the parameters :ref:`param-empty_first`, :ref:`param-empty_last`, and :ref:`param-empty_exclude`
+    are ignored.
+
+    If this parameter is a single string, it represents the pattern used to form the file name of the empty
+    hologram series. See :ref:`param-object_names` for the description of the format of this pattern.
 
     If the parameter ``empty_names`` is not present in the parameter file, no empty hologram series will be
     reconstructed and averaged. In this case, the parameters :ref:`param-empty_first`, :ref:`param-empty_last` are not
     needed.
+
+    .. versionchanged:: 1.1.6
+        Instead of specifying a filename pattern, also a list of filenames can be supplied.
 
 .. _param-empty_override:
 
@@ -438,9 +446,15 @@ object_names
 ^^^^^^^^^^^^
 
 :Parameter: ``object_names``
-:Type: Mandatory
-:Format: String
-:Description: File name of object hologram series. Typically a series hologram file names contain an increasing number.
+:Type: (see Description)
+:Format: String or list of string
+:Description:
+    If this parameter is a list of strings, the list compromises the filenames of the object hologram series.
+    In this case the parameters :ref:`param-object_first`, :ref:`param-object_last`, and :ref:`param-object_exclude`
+    are ignored.
+
+    If the parameter is a single string, this string describes a pattern how to create the filenames of the
+    object hologram series. Typically a series hologram file names contain an increasing number.
     The number in this parameter is encoded with the *printf*-style format rules (`old-style formating in python
     <http://docs.python.org/3/library/stdtypes.html#old-string-formatting>`_). For instance simple numbers can be
     expressed as ``%d`` and become ``1``, ``2``, ``3``, etc. If you want to have zero padded three digit numbers use
@@ -450,6 +464,9 @@ object_names
     If the parameter ``object_names`` is not present in the parameter file, only the empty hologram series will be
     reconstructed and averaged. In this case, the parameters :ref:`param-object_first`, :ref:`param-object_last`,
     and :ref:`param-object_size` are not needed.
+
+    .. versionchanged:: 1.1.6
+        Instead of specifying a filename pattern, also a list of filenames can be supplied.
 
 .. _param-object_size:
 

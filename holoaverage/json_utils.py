@@ -33,7 +33,7 @@ def remove_comments(json_like):
             "baz": "blah" /* Multi-line
             Comment */
         }'''
-        >>> remove_comments('{"foo":"bar","baz":"blah",}')
+        >>> remove_comments(test_json)
         '{\n    "foo":"bar",\n    "baz":"blah"\n}'
 
     Original author:
