@@ -558,11 +558,24 @@ def main(argv=None):
         param_file = os.path.abspath(param_file)
         if verbose > 0:
             print("Loading parameters from\n\t%s" % os.path.basename(param_file))
-        with io.open(param_file, "rt", encoding="utf-8") as file:
-            param_string = file.read()
+        try:
+            with io.open(param_file, "rt", encoding="utf-8") as file:
+                param_string = file.read()
+        except Exception as exc:
+            print("Error reading parameter file:\n%s" % str(exc))
+            return 1
         basepath = os.path.dirname(param_file)
-    param = decode_json(param_string)
+
+    try:
+        param = decode_json(param_string)
+    except Exception as exc:
+        print("Error in JSON parameters:\n%s" % str(exc))
+        return 1
 
     # Reconstruct
-    holoaverage(param, basepath, verbose=verbose)
+    try:
+        holoaverage(param, basepath, verbose=verbose)
+    except Exception as exc:
+        print(str(exc))
+        return 1
     return 0  # Use exit code 0 for success
