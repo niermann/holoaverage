@@ -10,3 +10,4 @@ Holoaverage - reconstruction and averaging of off-axis holograms
     tutorial
     parameters
     outputs
+    changelog
