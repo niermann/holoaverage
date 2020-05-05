@@ -113,7 +113,7 @@ class HoloReconstructor(object):
         self._reco_attrs = {'dim_scale': self._destScale,
                             'carrier(nm-1)': self._carrier,
                             'space': +1,
-                            'reconstructionCutOff2(nm-2)': mask.max_q,
+                            'reconstructionCutOff2(nm-2)': mask.max_q2,
                             'reconstructionMaskType': mask.mask_type}
         # Prepare FFT
         self._reco_grid = Grid(shape, realSampling=self._destScale, dtype=self._grid.complexType)
