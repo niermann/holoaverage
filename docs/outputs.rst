@@ -61,7 +61,7 @@ error                       List of N Floats    Squared residual between individ
 factor                      List of Nx2 Floats  (real, imaginary) global amplitudes for individual holograms
 microscope                  String              Name of microscope (according to image files)
 raw_shift                   List of Nx2 Ints    (X, Y) shift of individual holograms in pixels after raw-alignment
-reconstructionCutOff2(nm2)  Float               Squared cut-off frequency (in 1/nm^2)
+reconstructionCutOff2(nm2)  2x2 Floats          Squared cut-off frequency matrix (in 1/nm^2; see :ref:`param-cut_off2`)
 reconstructionMaskType      ...                 Mask type as used for cutoff (see :ref:`param-filter_func`)
 roi                         List of 4 Ints      Reconstructed region of object holograms (see :ref:`param-roi`)
 shift(nm)                   List of Nx2 Floats  (X, Y) shift of individual holograms in nm (after fine-alignment)
