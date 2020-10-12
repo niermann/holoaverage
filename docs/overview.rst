@@ -107,6 +107,8 @@ Within the program the reconstruced object holograms are forwarded to the averag
 holograms are not saved into the output file. When the :ref:`param-output_series` parameter is ``true``,
 the aligned ROIs are also saved as dataset ``series``.
 
+.. _sec-normalization:
+
 Normalization
 -------------
 
