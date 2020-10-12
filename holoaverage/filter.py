@@ -164,16 +164,17 @@ class FilterFunction(object):
             g2 = np.fft.fftshift(qy**2 * iqmax2[1, 1] + qx**2 * iqmax2[0, 0] + 2 * qx * qy * iqmax2[0, 1])
         # Calculate filter function
         out = np.empty((roi[3] - roi[1], roi[2] - roi[0]), dtype=grid.floatType)
-        if self._mask_type[0] == self.MASKTYPE_BUTTERWORTH:
-            # Not real butterworth, but gain of butterworth
-            # See http://de.wikipedia.org/wiki/Butterworth-Filter
-            order = int(self._mask_type[1])
-            denom = 1.0 + np.power(g2[roi[1]:roi[3], roi[0]:roi[2]], order)
-            out = np.divide(1.0, denom, out=out)
-        elif self._mask_type[0] == self.MASKTYPE_GAUSSIAN:
-            out = np.exp(-0.5 * g2[roi[1]:roi[3], roi[0]:roi[2]], out)
-        elif self._mask_type[0] == self.MASKTYPE_EDGE:
-            out[...] = g2[roi[1]:roi[3], roi[0]:roi[2]] < 1.0
-        else:
-            out[...] = 1.0
+        with np.errstate(over='ignore', under='ignore'):
+            if self._mask_type[0] == self.MASKTYPE_BUTTERWORTH:
+                # Not real butterworth, but gain of butterworth
+                # See http://de.wikipedia.org/wiki/Butterworth-Filter
+                order = abs(int(self._mask_type[1]))
+                denom = 1.0 + np.power(g2[roi[1]:roi[3], roi[0]:roi[2]], order)
+                out = np.divide(1.0, denom, out=out)
+            elif self._mask_type[0] == self.MASKTYPE_GAUSSIAN:
+                out = np.exp(-0.5 * g2[roi[1]:roi[3], roi[0]:roi[2]], out)
+            elif self._mask_type[0] == self.MASKTYPE_EDGE:
+                out[...] = g2[roi[1]:roi[3], roi[0]:roi[2]] < 1.0
+            else:
+                out[...] = 1.0
         return out
