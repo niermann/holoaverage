@@ -1,3 +1,5 @@
+.. highlight:: javascript
+
 Example parameter files
 =======================
 
