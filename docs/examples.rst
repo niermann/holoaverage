@@ -102,3 +102,28 @@ synthetic empty hologram is creacted from predetermined camera distortions
         // Parameterization for MTF
         //"mtf" : ...
     }
+
+
+Only reconstruct single hologram (no averaging)
+-----------------------------------------------
+
+This example reconstructs a single (object) hologram, and normalizes with
+a single empty hologram::
+
+    {
+        // Output file name (will be HDF5 file). Required.
+        "output_name" : "output.hdf5",
+
+        // List with just a single filename
+        "object_names" : ["my_hologram.dm3"],
+
+        // Empty hologram (list with single filename)
+        "object_names" : ["empty.dm3"],
+
+        // Reconstruction parameters
+        "object_size" : 512,
+        "sideband_pos" : [749, 1019],
+        "filter_func" : ["BUTTERWORTH", 14],
+        "cut_off" : 1.0
+    }
+

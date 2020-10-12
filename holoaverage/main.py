@@ -216,8 +216,8 @@ def holoaverage(param, basepath="", verbose=0):
             object_names = [str(name) for name in object_names]
         else:
             object_names = str(param['object_names'])
-        object_first = int(param.get('object_first'))
-        object_last = int(param.get('object_last'))
+            object_first = int(param.get('object_first'))
+            object_last = int(param.get('object_last'))
     else:
         object_names = None
     if 'object_size' in param:
@@ -482,7 +482,7 @@ def holoaverage(param, basepath="", verbose=0):
         holo_series.saveHDF5(output_name, output_prefix + 'series')
 
     # Average series
-    defocus = np.array([(index - object_first) * defocus_step + defocus_first for index in object_index])
+    defocus = np.array([index * defocus_step + defocus_first for index in object_index])
     if len(holo_series) > 1:
         out, var = holoAverage(holo_series, defocus=defocus, adjustDefocus=adjust_defocus, adjustShift=adjust_shift, adjustTilt=adjust_tilt, verbose=verbose * 2, variance=True)
     else:

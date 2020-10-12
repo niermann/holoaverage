@@ -343,6 +343,10 @@ class TestExamples(unittest.TestCase):
         empty_names = param["empty_names"]
         param["object_names"] = [object_names % n for n in range(1, 12, 2)]
         param["empty_names"] = [empty_names % n for n in range(1, 12, 2)]
+        del param["object_first"]
+        del param["object_last"]
+        del param["empty_first"]
+        del param["empty_last"]
         holoaverage(param, verbose=self.VERBOSE)
         with h5py.File(param["output_name"], "r") as output:
             data_convergence = output["data"].attrs["convergence"]
