@@ -224,16 +224,18 @@ cut_off2
     the major axis with an angle of `alpha` to the x-axis and a radius of `b` along the minor axis, specify
 
     .. math::
-        \begin{multline}
-        R = \left[ \begin{array}{cc}
-        \cos(\alpha) & \sin(\alpha) \\
-        -\sin(\alpha) & \cos(\alpha) \\
-        \end{array}\right] \\
         \mathrm{cut\_off2} = R^T \cdot \left[ \begin{array}{cc}
         a^2 & 0 \\
         0 & b^2 \\
         \end{array}\right] \cdot R
-        \end{multline}
+
+    with
+
+    .. math::
+        R = \left[ \begin{array}{cc}
+        \cos(\alpha) & \sin(\alpha) \\
+        -\sin(\alpha) & \cos(\alpha) \\
+        \end{array}\right]
 
     If this parameter is specified, the parameter :ref:`param-cut_off` must not be present.
 
