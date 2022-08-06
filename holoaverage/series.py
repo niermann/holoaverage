@@ -298,8 +298,8 @@ class AbstractSeries(object):
         tl = np.array((-0.5, -0.5))
         br = np.array((self.shape[0] - 0.5, self.shape[1] - 0.5))
         if dim_scale.size == 1:
-            tl *= np.asscalar(dim_scale)
-            br *= np.asscalar(dim_scale)
+            tl *= dim_scale.item()
+            br *= dim_scale.item()
         elif dim_scale.ndim == 1:
             tl *= dim_scale
             br *= dim_scale
