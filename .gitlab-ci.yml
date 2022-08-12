@@ -36,7 +36,7 @@ stages:
 test_job:
   stage: test
   script:
-    - cd examples ; ./download-files.sh
+    - cd example ; ./download-files.sh
     - python3 -m pip install tox
     - tox
 
