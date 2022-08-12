@@ -3,6 +3,11 @@
 Changelog
 =========
 
+Version 1.1.8
+-------------
+
+* Fix deprecated functions
+
 Version 1.1.7
 -------------
 
