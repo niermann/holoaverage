@@ -388,7 +388,7 @@ class Series(AbstractSeries):
             dtype : Type of datasets
         """
         AbstractSeries.__init__(self, indexShape, shape, dtype)
-        self._data = np.zeros(indexShape, dtype=np.object)
+        self._data = np.zeros(indexShape, dtype=object)
 
     def __getitem__(self, index):
         return self._data.__getitem__(index)
