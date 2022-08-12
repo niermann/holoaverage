@@ -54,7 +54,7 @@ class ScaleMatrix(object):
         else:
             value = np.array(value, dtype=float, copy=True)
         if value.size == 1:
-            self._value = np.asscalar(value)
+            self._value = value.item()
             self._matrix = np.eye(self._ndim) * self._value
         elif value.ndim == 1:
             if (value.size != self._ndim):
@@ -82,7 +82,7 @@ class ScaleMatrix(object):
         else:
             value = np.array(value, dtype=float, copy=True)
         if value.size == 1:
-            self._value = np.asscalar(value)
+            self._value = value.item()
             self._matrix = np.eye(self._ndim) * self._value
         elif value.ndim == 1:
             if (value.size != self._ndim):
@@ -379,8 +379,8 @@ class Grid(object):
             if verbose > 0:
                 print("Planning FFT (FFT=%s, IFFT=%s, RFFT=%s, IRFFT=%s) ..." % (forwardFFT, backwardFFT, forwardRFFT, backwardRFFT))
 
-            from time import clock
-            timer = clock()
+            from time import perf_counter
+            timer = perf_counter()
 
             if forwardFFT and self._planFFT is None:
                 tmp = empty_aligned(self.shape, self.complexType)
@@ -395,7 +395,7 @@ class Grid(object):
                 tmp = empty_aligned(self.hermiteShape, dtype=self.complexType)
                 self._planIRFFT = pyfftw.builders.irfft2(tmp, self.shape, overwrite_input=True, planner_effort=pyfftw_planner, threads=pyfftw_threads, avoid_copy=True)
 
-            timer = clock() - timer
+            timer = perf_counter() - timer
             if verbose > 0:
                 print("    Took %f seconds." % timer)
         else:
