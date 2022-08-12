@@ -2,7 +2,7 @@ graft docs
 graft tests
 graft example
 
-include LICENSE
+include LICENSE.txt
 include CONTRIBUTING.rst
 include README.rst
 
