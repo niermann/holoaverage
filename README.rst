@@ -44,8 +44,8 @@ The BibTeX entry for the paper is:
 Installation
 ------------
 
-The program is a Python program. Thus, a working Python distribution is required for running it. It is designed
-to run under Python 2.7 and Python 3. Beside the Python interpreter it requires the following
+The program is a Python program. Thus, a working Python 3.X distribution is required for running it (support for Python
+2.X has been dropped since version 1.1.8). Beside the Python interpreter it requires the following
 packages:
 
     * numpy (see `<www.numpy.org>`_)
@@ -53,23 +53,23 @@ packages:
     * h5py (see `<www.hypy.org>`_)
     * pyFFTW is optional; speeds up the averaging (see `<https://pypi.python.org/pypi/pyFFTW>`_)
 
-The package is tested with Python versions 2.7 and 3.5, numpy version 1.11.0, scipy version 0.18.0, h5py version 2.6.0
-and version PyFFTW 0.10.4.
+The package is tested with following Python versions:
+    * Python 3.6, numpy 1.11, scipy 0.19, h5py 2.7, PyFFTW 0.10
+    * Python 3.8, numpy 1.23, scipy 1.9, h5py 3.7, PyFFTW 0.13
 
-The package can be most conveniently installed using the ``pip`` package manager. Make sure you have Python installed (either 2.X
-or 3.X) and the ``pip3`` program (``pip2`` for Python 2.X) is in your path. Go to the command line and execute (if you use Python 2.7 use ``pip2``
-instead of ``pip3``).
+The package can be most conveniently installed using the ``pip`` package manager. Make sure you have Python installed
+and the Python interpreter is in your path. Go to the command line and execute:
 
 .. code-block:: none
 
-    pip3 install --upgrade holoaverage
+    python3 -m pip install --upgrade holoaverage
 
 Holoaverage leverages the pyFFTW package for speed. If pyfftw can not be installed you can still use holoaverage
-without problems. You can install pyFFTW by (with Python 2.7 again use ``pip2`` instead of ``pip3``)
+without problems. You can install pyFFTW by
 
 .. code-block:: none
 
-    pip3 install --upgrade pyfftw
+    python3 -m pip install --upgrade pyfftw
 
 Up to date source versions can be found on the GitHub site: https://github.com/niermann/holoaverage
 
@@ -88,7 +88,7 @@ License
 .. code-block:: none
 
     Holoaverage, program for reconstruction and averaging of electron holograms
-    Copyright (C) 2018 Tore Niermann
+    Copyright (C) 2018-2022 Tore Niermann
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

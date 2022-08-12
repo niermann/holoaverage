@@ -6,6 +6,7 @@ Changelog
 Version 1.1.8
 -------------
 
+* Dropped Python 2.X support
 * Fix deprecated functions
 
 Version 1.1.7
