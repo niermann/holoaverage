@@ -3,7 +3,10 @@ The data files for the reconstruction can be downloaded as zip-archive from the 
 
     https://doi.org/10.14279/depositonce-6674
 
-Unzip the file into this directory. This directory contains a parameter file for the reconstruction of the data files:
+Unzip the file into this directory. On unix* platforms you can use the ./download-files.sh script to download the
+example files for you.
+
+This directory contains a parameter file for the reconstruction of the data files:
 
     holoaverage-a1.json
 
