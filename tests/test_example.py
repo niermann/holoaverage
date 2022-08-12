@@ -5,8 +5,8 @@ import h5py
 import numpy as np
 
 import warnings
-warnings.filterwarnings("error",category=DeprecationWarning)
-warnings.filterwarnings("error",category=PendingDeprecationWarning)
+warnings.filterwarnings("error", category=DeprecationWarning)
+warnings.filterwarnings("error", category=PendingDeprecationWarning)
 
 from holoaverage.main import holoaverage, rescale_fourier
 
