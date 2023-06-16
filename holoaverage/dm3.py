@@ -660,13 +660,11 @@ def parse_known_metadata_tags(tags):
     # Timestamp
     if ('DataBar:Acquisition Date' in tags) and ('DataBar:Acquisition Time' in tags):
         date_string = tags['DataBar:Acquisition Date'].as_string()
-        time_string = tags['DataBar:Acquisition Time'].as_string().split(' ')
-        import datetime
-        date = datetime.datetime.strptime(date_string, '%m/%d/%Y').date()
-        time = datetime.datetime.strptime(time_string[0], '%I:%M:%S').time()
-        timestamp = datetime.datetime.combine(date, time)
-        if time_string[1].upper() == 'PM':
-            timestamp += datetime.timedelta(hours=12)
+        time_string = tags['DataBar:Acquisition Time'].as_string()
+
+        from dateutil.parser import parse
+
+        timestamp = parse('%s %s' % (date_string, time_string), dayfirst=False, yearfirst=False)
         result['timestamp'] = timestamp.isoformat('T')
 
     return result

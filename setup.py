@@ -41,7 +41,7 @@ setup(
         'Topic :: Scientific/Engineering :: Chemistry',
         'Topic :: Scientific/Engineering :: Physics',
     ],
-    install_requires=['numpy', 'scipy', 'h5py'],
+    install_requires=['numpy', 'scipy', 'h5py', 'python-dateutil'],
     extras_require={
         'rst': ['docutils>=0.11'],
         'fftw': ['pyfftw'],
