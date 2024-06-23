@@ -15,6 +15,7 @@
 # along with holoaverage.  If not, see <http://www.gnu.org/licenses/>.
 import numpy as np
 from math import sqrt
+from scipy.constants import physical_constants
 
 from .fft import aligned_copy
 from .series import DataSet
@@ -30,10 +31,10 @@ def calcWaveLength(voltage_kV):
         voltage_kV
             float: Voltage [kV]
     """
-    # Constants from CODATA 2006
-    PLANCK_CONSTANT_eVs = 4.13566733e-15    # eVs
-    SPEED_OF_LIGHT_m_s = 299792458.0        # m/s
-    ELECTRON_MASS_keV = 0.510998910e+3      # keV
+    # Constants from SciPy database (CODATA 2018)
+    PLANCK_CONSTANT_eVs = physical_constants['Planck constant in eV/Hz'][0]                    # eVs
+    SPEED_OF_LIGHT_m_s = physical_constants['speed of light in vacuum'][0]                     # m/s
+    ELECTRON_MASS_keV = physical_constants['electron mass energy equivalent in MeV'][0]*1e3    # keV
 
     return PLANCK_CONSTANT_eVs * SPEED_OF_LIGHT_m_s * 1e+6 / sqrt(voltage_kV * (2.0 * ELECTRON_MASS_keV + voltage_kV))
 
