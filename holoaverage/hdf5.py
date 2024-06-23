@@ -92,10 +92,10 @@ def setH5Image(dataset, vmin, vmax):
     if vmax is None:
         vmax = np.amax(dataset)
     vrange = (vmin, vmax)
-    dataset.attrs[b'CLASS'] = np.string_('IMAGE')
-    dataset.attrs[b'IMAGE_SUBCLASS'] = np.string_('IMAGE_GRAYSCALE')
+    dataset.attrs[b'CLASS'] = np.bytes_('IMAGE')
+    dataset.attrs[b'IMAGE_SUBCLASS'] = np.bytes_('IMAGE_GRAYSCALE')
     dataset.attrs[b'IMAGE_WHITE_IS_ZERO'] = np.uint8(0)
-    dataset.attrs[b'DISPLAY_ORIGIN'] = np.string_('UL')
+    dataset.attrs[b'DISPLAY_ORIGIN'] = np.bytes_('UL')
     dataset.attrs[b'IMAGE_MINMAXRANGE'] = np.array(vrange, dtype=dataset.dtype)
 
 
