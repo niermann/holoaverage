@@ -182,8 +182,8 @@ class AbstractSeries(object):
             shape : Shape of datasets
             dtype : Type of datasets
         """
-        indexShape = np.cast[int](np.atleast_1d(indexShape))
-        shape = np.cast[int](np.atleast_1d(shape))
+        indexShape = np.atleast_1d(indexShape).astype(int)
+        shape = np.atleast_1d(shape).astype(int)
         self._shape = tuple(shape)
         self._size = np.prod(shape)
         self._indexShape = tuple(indexShape)
@@ -549,4 +549,3 @@ class LazyLoadingSeries(AbstractSeries):
             for i in range(1, len(listOfNames)):
                 print("\t[%02d] %s" % (i, os.path.basename(listOfNames[i])))
         return result
-
