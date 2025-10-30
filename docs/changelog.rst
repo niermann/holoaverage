@@ -3,6 +3,12 @@
 Changelog
 =========
 
+Version 1.1.9
+-------------
+
+* Fix for timestamp parsing of Digital Micrograph files (thanks to Hüseyin Celik)
+* Fix for deprecated numpy 2.0 functions  (thanks to Hüseyin Celik)
+
 Version 1.1.8
 -------------
 
