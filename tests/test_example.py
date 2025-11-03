@@ -192,6 +192,22 @@ class TestExamples(unittest.TestCase):
         delta = (data_convergence[1:] - data_convergence[:-1]) / data_convergence[:-1]
         self.assertTrue(np.all(delta < +1e-4))
 
+    def test_output_aligned_as_single_dataset(self):
+        param = self.default_GaN_param()
+        del param["empty_names"]
+        del param["empty_size"]
+        param["only_align"] = True
+        param["output_series_as_dataset"] = True
+        holoaverage(param, verbose=self.VERBOSE)
+
+        with h5py.File(param["output_name"], "r") as output:
+            self.assertFalse("empty" in output)
+            self.assertFalse("data" in output)
+            aligned_rois = output["aligned_rois"][...]
+
+        self.assertEqual(aligned_rois.shape, (20, 1792, 1792))
+
+
     def test_GaN_empty_from_raw(self):
         param = self.default_GaN_param()
         empty_raw = self.touch_temp_output(suffix=".dat")

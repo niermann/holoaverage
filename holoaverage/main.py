@@ -298,7 +298,8 @@ def holoaverage(param, basepath="", verbose=0):
     adjust_shift = bool(param.get('adjust_shift', True))
     adjust_tilt = bool(param.get('adjust_tilt', False))
     output_series = bool(param.get('output_series', False))
-    output_aligned = bool(param.get('output_aligned', False))
+    only_align = bool(param.get('only_align', False))
+    output_aligned = bool(param.get('output_aligned', only_align))
     output_as_dataset = bool(param.get('output_series_as_dataset', False))
     if ('output_name' not in param) and ('output' in param):
         warnings.warn("The parameter 'output' is deprecated. Use 'output_name' instead.", DeprecationWarning)
@@ -338,7 +339,9 @@ def holoaverage(param, basepath="", verbose=0):
         version_string = version_string.encode("ascii")
 
     # Reconstruct empty wave
-    if synthesize_empty:
+    if only_align:
+        empty = None
+    elif synthesize_empty:
         # Create synthetic empty
         camera_dev_names = [os.path.join(prefix_path, name) for name in distortions]
         camera_dev = [load_file(name).array for name in camera_dev_names]
@@ -437,6 +440,9 @@ def holoaverage(param, basepath="", verbose=0):
     # Save series
     if output_aligned and output_name:
         data_rois.saveHDF5(output_name, output_prefix + 'aligned_rois', as_single_dataset=output_as_dataset)
+
+    if only_align:
+        return
 
     # Reconstruct object series
     if object_size is None:

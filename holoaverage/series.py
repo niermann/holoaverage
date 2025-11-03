@@ -361,7 +361,12 @@ class AbstractSeries(object):
                 del fd[name]
 
             if as_single_dataset:
-                saveHDF5(fd, self.array, dataName=name, image=image, warn_attributes=False)
+                dataset = DataSet(self.indexShape + self.shape, self.dtype, attrs=self.attrs)
+                for index in np.ndindex(self.indexShape):
+                    dataset.array[index] = self.__getitem__(index).array
+                saveHDF5(fd, dataset.array, dataName=name, warn_attributes=False)
+                del dataset
+
                 item = fd[name]
             else:
                 item = fd.create_group(name)

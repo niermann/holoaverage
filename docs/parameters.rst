@@ -485,6 +485,19 @@ object_size
      diameter of filter used during the reconstruction (see :ref:`param-cut_off` parameter). For performance
      reasons a number with low prime factors should be chosen, e.g. prefer ``384 = 3 * 2^7`` over ``383`` (prime).
 
+.. _param-only_align:
+
+only_align
+^^^^^^^^^^
+
+:Parameter: ``only_align``
+:Type: Optional  (default is ``false``)
+:Format: Boolean
+:Description: If set to ``true`` only the object series is raw aligned. No reconstruction of the empty series or the
+object series is performed. Sets the default of :ref:`param-output_aligned` to ``true``.
+
+    .. versionadded:: 1.1.10
+
 .. _param-only_phase:
 
 only_phase
@@ -525,7 +538,7 @@ output_series_as_dataset
     :ref:`param-output_aligned` are saved as single dataset. If set to ``false`` they are saved as an HDF5 group
     with individual datasets for the individual images.
 
-    .. versionadded:: 1.1
+    .. versionadded:: 1.1.10
 
 .. _param-output_name:
 
