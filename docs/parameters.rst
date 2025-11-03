@@ -494,7 +494,7 @@ only_align
 :Type: Optional  (default is ``false``)
 :Format: Boolean
 :Description: If set to ``true`` only the object series is raw aligned. No reconstruction of the empty series or the
-object series is performed. Sets the default of :ref:`param-output_aligned` to ``true``.
+    object series is performed. Sets the default of :ref:`param-output_aligned` to ``true``.
 
     .. versionadded:: 1.1.10
 

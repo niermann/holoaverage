@@ -3,6 +3,74 @@
 Example parameter files
 =======================
 
+Example for reconstruction of series
+------------------------------------
+
+This is basically the example from the :ref:`_sec-tutorial`, but without defocus adjustment::
+
+
+    {
+        // Path of hologram files (using printf format, integer argument). Required.
+        "object_names" : "holo_%03d.dm3",
+
+        // Index of first hologram.
+        "object_first" : 1,
+
+        // Index of last hologram. Required.
+        "object_last" : 20,
+
+        // Same (name, first index, last index) for "empty" holograms.
+        "empty_names" : "empty_%03d.dm3",
+        "empty_first" : 1,
+        "empty_last" : 20,
+
+        // Sampling (nm/px) of object holograms.
+        // Defaults to value in data files.
+        //"sampling" : 0.00519824,
+
+        // Voltage in kV. Default to value recorded in data files.
+        //"voltage": 300,
+
+        // Size (in px) used for reconstruction of "empty" holograms. Required.
+        "empty_size" : 512,
+
+        // Size (in px) used for reconstruction of "object" holograms Required.
+        "object_size" : 384,
+
+        // X, Y Position of sideband in FFT pixels (origin is in center). Required.
+        "sideband_pos" : [1136, 1304],
+
+        // Reconstruction region in pixels (L, T, R, B). Defaults to full region.
+        "roi" : [128, 128, 1920, 1920],
+
+        // Region for raw alignment in pixels (L, T, R, B). Defaults to roi.
+        //"align_roi" : [256, 256, 1536, 1536],
+
+        // Disable raw alignment. Raw alignment is enabled by default.
+        //"enable_raw_alignment" : false,
+
+        // Output file name (will be HDF5 file). Required.
+        "output_name" : "holo.hdf5",
+
+        // Mask type (see FilterFunction for details). Defaults to "EDGE"
+        // "filter_func" : "EDGE",
+        "filter_func" : ["BUTTERWORTH", 14],
+
+        // cut off frequency in 1/nm (q_max). Required.
+        "cut_off" : 14.5,
+
+        // Parameterization for MTF
+        "mtf" : [["CONSTANT", -2.25536738e-02],
+                 ["LORENTZIAN", 1.02543658e-05, 1.15367655e-04],
+                 ["LORENTZIAN", 2.49224357e-02, 5.35262063e-02],
+                 ["GAUSSIAN", 4.60461599e-01, 4.36842560e+02]],
+
+        // Correct phase by empty phase only (true), or full complex reconstruction (false).
+        // Defaults to false.
+        "only_phase": false,
+    }
+
+
 Only reconstruct empty hologram
 -------------------------------
 

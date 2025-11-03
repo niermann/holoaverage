@@ -94,9 +94,8 @@ Copy the following text into this file and save it under the name ``holoaverage-
 the parameter file freely, however we will assume you called it ``holoaverage-a1.json`` in the following.
 We will discuss the meaning of the most important parameters in the following.
 A thorough reference for all parameters can be found in the Section :ref:`sec-parameters` of the
-documentation. Lines beginning with double slashes (i.e. ``//``) are comments and are ignored by the program.
+documentation. Lines beginning with double slashes (i.e. ``//``) are comments and are ignored by the program::
 
-::
 
     {
         // Path of hologram files (using printf format, integer argument). Required.
