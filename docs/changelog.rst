@@ -3,6 +3,11 @@
 Changelog
 =========
 
+Version 1.1.10
+--------------
+
+* Added parameter `output_series_as_dataset` for control over output of series.
+
 Version 1.1.9
 -------------
 

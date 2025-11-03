@@ -511,6 +511,22 @@ output_aligned
 :Description: When set to ``true``, the region of interest of the individual object holograms (before
     reconstruction) are also stored in the output file.
 
+    See :ref:`param-output_series_as_dataset` for control over the output format.
+
+.. _param-output_series_as_dataset:
+
+output_series_as_dataset
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+:Parameter: ``output_series_as_dataset``
+:Type: Optional (default is ``false``)
+:Format: Boolean
+:Description: When set to ``true``, series as saved by parameters :ref:`param-output_series` or
+    :ref:`param-output_aligned` are saved as single dataset. If set to ``false`` they are saved as an HDF5 group
+    with individual datasets for the individual images.
+
+    .. versionadded:: 1.1
+
 .. _param-output_name:
 
 output_name
@@ -550,6 +566,8 @@ output_series
 :Description: When set to ``true``, also the individual object hologram reconstructions are stored in the output file.
     The averaged hologram (and the variance estimation obtained during averaging) are always stored in the output file.
     The individual reconstructions of the empty hologram series are never stored.
+
+    See :ref:`param-output_series_as_dataset` for control over the output format.
 
 .. _param-path:
 

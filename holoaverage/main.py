@@ -299,6 +299,7 @@ def holoaverage(param, basepath="", verbose=0):
     adjust_tilt = bool(param.get('adjust_tilt', False))
     output_series = bool(param.get('output_series', False))
     output_aligned = bool(param.get('output_aligned', False))
+    output_as_dataset = bool(param.get('output_series_as_dataset', False))
     if ('output_name' not in param) and ('output' in param):
         warnings.warn("The parameter 'output' is deprecated. Use 'output_name' instead.", DeprecationWarning)
         output_name = os.path.join(prefix_path, str(param['output']))
@@ -435,7 +436,7 @@ def holoaverage(param, basepath="", verbose=0):
 
     # Save series
     if output_aligned and output_name:
-        data_rois.saveHDF5(output_name, output_prefix + 'aligned_rois')
+        data_rois.saveHDF5(output_name, output_prefix + 'aligned_rois', as_single_dataset=output_as_dataset)
 
     # Reconstruct object series
     if object_size is None:
@@ -479,7 +480,7 @@ def holoaverage(param, basepath="", verbose=0):
 
     # Save series
     if output_series and output_name:
-        holo_series.saveHDF5(output_name, output_prefix + 'series')
+        holo_series.saveHDF5(output_name, output_prefix + 'series', as_single_dataset=output_as_dataset)
 
     # Average series
     defocus = np.array([index * defocus_step + defocus_first for index in object_index])

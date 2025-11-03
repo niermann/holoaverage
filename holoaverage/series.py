@@ -338,42 +338,50 @@ class AbstractSeries(object):
             indexSlider.append(slider)
         plt.show()
 
-    def saveHDF5(self, fileName, groupName, mode="a", image=None):
+    def saveHDF5(self, fileName, name, mode="a", image=None, as_single_dataset: bool = True):
         """Save series to a HDF5 file.
 
         Arguments:
             fileName
                 Name of the HDF5 file
-            groupName
+            name
                 Name under which the series is saved.
             mode
                 File update mode
             image
                 Save elements of DataSeries as image (see saveHDF5)
+            as_single_dataset
+                Save series as single dataset (True) opposed to group of datasets (False)
         """
         import h5py
         from .hdf5 import saveHDF5, setAttrHDF5
         unsaved = []
         with h5py.File(fileName, mode) as fd:
-            if groupName in fd:
-                del fd[groupName]
-            group = fd.create_group(groupName)
+            if name in fd:
+                del fd[name]
+
+            if as_single_dataset:
+                saveHDF5(fd, self.array, dataName=name, image=image, warn_attributes=False)
+                item = fd[name]
+            else:
+                item = fd.create_group(name)
+                for flatIndex in range(self.indexSize):
+                    index = np.unravel_index(flatIndex, self.indexShape)
+                    name = '_'.join('%03d' % i for i in index)
+                    dataSet = self.__getitem__(index)
+                    saveHDF5(item, dataSet.array, dataName=name, image=image, warn_attributes=False)
+
             for k, v in self.attrs.items():
-                setAttrHDF5(group, unsaved, k, v)
+                setAttrHDF5(item, unsaved, k, v)
             # Save dataset format
-            setAttrHDF5(group, unsaved, '_shape', self.shape)
-            setAttrHDF5(group, unsaved, '_indexShape', self.indexShape)
-            setAttrHDF5(group, unsaved, '_dtype', self.dtype.str)
+            setAttrHDF5(item, unsaved, '_shape', self.shape)
+            setAttrHDF5(item, unsaved, '_indexShape', self.indexShape)
+            setAttrHDF5(item, unsaved, '_dtype', self.dtype.str)
             # Save items
-            for flatIndex in range(self.indexSize):
-                index = np.unravel_index(flatIndex, self.indexShape)
-                name = '_'.join('%03d' % i for i in index)
-                dataSet = self.__getitem__(index)
-                saveHDF5(group, dataSet.array, dataName=name, image=image, warn_attributes=False)
         if len(unsaved) != 0:
             print("The following series attributes weren't saved:")
-            for item in unsaved:
-                print("\t", item)
+            for a in unsaved:
+                print("\t", a)
 
 
 class Series(AbstractSeries):

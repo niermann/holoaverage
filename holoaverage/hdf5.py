@@ -117,8 +117,6 @@ def saveHDF5(groupOrFileName, data, dataName='data', mode="a", image=None, vmin=
             Color range if image=True
         warn_attributes
             Warn if there are unsaved attributes
-    Returns:
-        data as :class:`DataSet`
     """
     if isinstance(data, DataSet):
         attrs = data.attrs
