@@ -7,6 +7,7 @@ Version 1.1.10
 --------------
 
 * Added parameter `output_series_as_dataset` for control over output of series.
+* Added parameter `only_align` for raw alignment only.
 
 Version 1.1.9
 -------------
