@@ -6,7 +6,7 @@ Example parameter files
 Example for reconstruction of series
 ------------------------------------
 
-This is basically the example from the :ref:`_sec-tutorial`, but without defocus adjustment::
+This is basically the example from the :ref:`sec-tutorial`, but without defocus adjustment::
 
 
     {
