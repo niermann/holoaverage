@@ -546,12 +546,15 @@ output_name
 ^^^^^^^^^^^
 
 :Parameter: ``output_name``
-:Type: Mandatory
+:Type: Optional, if a parameter file was used. Otherwise, mandatory.
 :Format: String
 :Description: Name of the output file. The output(s) will be always stored in HDF5 format.
 
     .. versionchanged:: 1.1
         The parameter was renamed from ``output`` to ``output_name``.
+
+    .. versionchanged:: 1.1.11
+        The parameter was made optional, if a parameter file was used as input.
 
 .. _param-output_prefix:
 

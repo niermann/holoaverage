@@ -9,3 +9,5 @@ build
 *.egg-info
 __pycache__
 example/GaN_holographic_focal_series/
+.claude/
+CLAUDE.md

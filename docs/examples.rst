@@ -49,8 +49,9 @@ This is basically the example from the :ref:`sec-tutorial`, but without defocus 
         // Disable raw alignment. Raw alignment is enabled by default.
         //"enable_raw_alignment" : false,
 
-        // Output file name (will be HDF5 file). Required.
-        "output_name" : "holo.hdf5",
+        // Output file name (will be HDF5 file). Required if parameters are read from stdin or holoaverage() is called from Python.
+        // Defaults to name of parameter file with ".hdf5" extension
+        //"output_name" : "holo.hdf5",
 
         // Mask type (see FilterFunction for details). Defaults to "EDGE"
         // "filter_func" : "EDGE",
@@ -129,9 +130,6 @@ This example uses a prereconstructed empty hologram for normalization
         // Optional reconstruction region (L, T, R, B). Defaults to full region.
         //"roi" : [166, 388, 1701, 1923],
 
-        // Output file name (will be HDF5 file). Required.
-        "output_name" : "my_reco.hdf5",
-
         // Parameterization for MTF
         //"mtf" : ...
     }
@@ -166,9 +164,6 @@ synthetic empty hologram is creacted from predetermined camera distortions
         // Optional reconstruction region (L, T, R, B). Defaults to full region.
         //"roi" : [166, 388, 1701, 1923],
 
-        // Output file name (will be HDF5 file). Required.
-        "output_name" : "my_reco.hdf5",
-
         // Parameterization for MTF
         //"mtf" : ...
     }
@@ -181,9 +176,6 @@ This example reconstructs a single (object) hologram, and normalizes with
 a single empty hologram::
 
     {
-        // Output file name (will be HDF5 file). Required.
-        "output_name" : "output.hdf5",
-
         // List with just a single filename
         "object_names" : ["my_hologram.dm3"],
 

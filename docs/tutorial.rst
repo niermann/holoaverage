@@ -390,12 +390,13 @@ reconstructions. This can be adjusted by the :ref:`param-only_phase` parameter. 
 
         "only_phase": false,
 
-Eventually, the filename of the output file must be provided by the :ref:`param-output_name` parameter. The output will
+Eventually, the filename of the output file is provided by the :ref:`param-output_name` parameter. If no
+:ref:`param-output_name` value is given, the name of the parameter file with a `.hdf5` suffix is used. The output will
 be always HDF5 files, the contents of these files is described in Section :ref:`sec-outputs`.
 
 ::
 
-        "output" : "a1.hdf5",
+        "output_name" : "a1.hdf5",
 
 Starting the program
 --------------------
@@ -476,7 +477,8 @@ Results
 -------
 
 After the program succeeded the outputs can be found in the output file as specified by the :ref:`param-output_name`
-parameter. In the present example the outputs are in the file ``a1.hdf5`` in the same directory as the parameter file.
+parameter. If no :ref:`param-output_name` value is given, the name of the parameter file with a `.hdf5` suffix is used for output.
+In the present example the outputs are in the file ``a1.hdf5`` in the same directory as the parameter file.
 
 If you are using Digital Micrograph, there is also a plugin to read HDF5 files, which can be found at
 `<https://github.com/niermann/gms_plugin_hdf5/releases>`_. These outputs should be checked for artifacts.

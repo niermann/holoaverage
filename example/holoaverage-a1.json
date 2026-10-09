@@ -38,7 +38,8 @@
     // Region for raw alignment in pixels (L, T, R, B). Defaults to roi.
     //"align_roi" : [256, 256, 1536, 1536],
 
-    // Output file name (will be HDF5 file). Required.
+    // Output file name (will be HDF5 file). Required if parameters are read from stdin or holoaverage() is called from Python.
+    // Defaults to name of parameter file with ".hdf5" extension
     "output_name" : "a1.hdf5",
 
     // Mask type (see FilterFunction for details). Defaults to "EDGE"

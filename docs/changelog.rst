@@ -3,6 +3,11 @@
 Changelog
 =========
 
+Version 1.1.11
+--------------
+
+* Derive default for `output_name` from parameter file name.
+
 Version 1.1.10
 --------------
 

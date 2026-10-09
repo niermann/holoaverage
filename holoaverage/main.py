@@ -307,7 +307,7 @@ def holoaverage(param, basepath="", verbose=0):
     elif 'output_name' in param:
         output_name = os.path.join(prefix_path, str(param['output_name']))
     else:
-        output_name = None
+        raise ValueError("Parameter 'output_name' is required.")
     output_prefix = str(param.get('output_prefix', ''))
     defocus_first = float(param.get('defocus_first', 0.0))
     defocus_step = float(param.get('defocus_step', 0.0))
@@ -361,8 +361,7 @@ def holoaverage(param, basepath="", verbose=0):
             empty_sampling = np.ones(2, dtype=float) * sampling
 
         empty = create_synthetic_empty(camera_dev, sideband_pos, empty_size, empty_sampling, mask_type)
-        if output_name:
-            saveHDF5(output_name, empty, dataName=output_prefix + "empty")
+        saveHDF5(output_name, empty, dataName=output_prefix + "empty")
     elif empty_override is not None:
         empty_override = os.path.join(prefix_path, empty_override)
         if verbose > 0:
@@ -396,10 +395,9 @@ def holoaverage(param, basepath="", verbose=0):
         else:
             empty = empty_holo[0]
 
-        if output_name:
-            empty.attrs["holoaverage_param"] = param_string
-            empty.attrs["holoaverage_version"] = version_string
-            saveHDF5(output_name, empty, dataName=output_prefix + "empty")
+        empty.attrs["holoaverage_param"] = param_string
+        empty.attrs["holoaverage_version"] = version_string
+        saveHDF5(output_name, empty, dataName=output_prefix + "empty")
     else:
         if empty_size is None:
             if object_size is None:
@@ -438,7 +436,7 @@ def holoaverage(param, basepath="", verbose=0):
     del data_series
 
     # Save series
-    if output_aligned and output_name:
+    if output_aligned:
         data_rois.saveHDF5(output_name, output_prefix + 'aligned_rois', as_single_dataset=output_as_dataset)
 
     if only_align:
@@ -485,7 +483,7 @@ def holoaverage(param, basepath="", verbose=0):
         rescale_fourier(big_data, out=holo_series[index].array)
 
     # Save series
-    if output_series and output_name:
+    if output_series:
         holo_series.saveHDF5(output_name, output_prefix + 'series', as_single_dataset=output_as_dataset)
 
     # Average series
@@ -495,11 +493,11 @@ def holoaverage(param, basepath="", verbose=0):
     else:
         out = propagate(holo_series[0], defocus[0], holo_series.attrs["voltage(kV)"])
         var = None
-    if output_name:
-        out.attrs["holoaverage_param"] = param_string
-        out.attrs["holoaverage_version"] = version_string
-        saveHDF5(output_name, out, dataName=output_prefix + "data")
-    if output_name and (var is not None):
+
+    out.attrs["holoaverage_param"] = param_string
+    out.attrs["holoaverage_version"] = version_string
+    saveHDF5(output_name, out, dataName=output_prefix + "data")
+    if var is not None:
         var.attrs["holoaverage_param"] = param_string
         var.attrs["holoaverage_version"] = version_string
         saveHDF5(output_name, var, dataName=output_prefix + "variance")
@@ -578,6 +576,15 @@ def main(argv=None):
     except Exception as exc:
         print("Error in JSON parameters:\n%s" % str(exc))
         return 1
+
+    # Inject output name
+    if ("output_name" not in param) and ("output" not in param) and param_file != '-':
+        param_root, param_ext = os.path.splitext(param_file)
+        if param_ext.lower() == ".hdf5":
+            print("Parameter file has '.hdf5' extension, the default output name would overwrite it.\n"
+                  "Set the parameter 'output_name' explicitly.")
+            return 1
+        param["output_name"] = param_root + ".hdf5"
 
     # Reconstruct
     try:

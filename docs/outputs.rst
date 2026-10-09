@@ -3,7 +3,8 @@
 Outputs
 =======
 
-Within the parameter file the output filename is specified by the :ref:`param-output_name` parameter. This output file
+Within the parameter file the output filename is specified by the :ref:`param-output_name` parameter. If no
+:ref:`param-output_name` value is given, the name of the parameter file with a `.hdf5` suffix is used. This output file
 will always be a HDF5 file. The dataset names described below are prefixed by the value of the :ref:`param-output_prefix`
 parameter (which is empty by default). As example, if the value of ``output_prefix`` would be ``alpha_``, the dataset
 ``data`` is saved as ``alpha_data`` in the output file. By using the prefix multiple outputs can be written to the same
